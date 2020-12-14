@@ -20,14 +20,24 @@ output: set with the checkers
 */
 std::unordered_set<Checker> Rook::getAllPossibleMoves()
 {
+	return Rook::getAllPossibleStraightMoves(_board, _checker);
+}
+/*
+the function find all the straight moves pieces can do
+input: pointer to board and the current place of the piece
+output: set of checkers
+*/
+std::unordered_set<Checker> Rook::getAllPossibleStraightMoves(Board* _board, Checker _checker)
+{
 	bool flag = true;
 	int i = 0;
 	int x = _checker.getX();
 	int y = _checker.getY();
+	int _color = _board->board[x][y]->getColor();
 	std::unordered_set<Checker> set;
 	set.insert(Checker(x, y));
 
-	for (i = x + 1; i < SIZE && flag ; i++)
+	for (i = x + 1; i < SIZE && flag; i++)
 	{
 		if (!_board->board[i][y])
 		{
@@ -44,7 +54,7 @@ std::unordered_set<Checker> Rook::getAllPossibleMoves()
 		}
 	}
 	flag = true;
-	for (i = x - 1; i > 0 && flag; i--)
+	for (i = x - 1; i >= 0 && flag; i--)
 	{
 		if (!_board->board[i][y])
 		{
@@ -78,7 +88,7 @@ std::unordered_set<Checker> Rook::getAllPossibleMoves()
 		}
 	}
 	flag = true;
-	for (i = y - 1; i > 0 && flag; i --)
+	for (i = y - 1; i >= 0 && flag; i--)
 	{
 		if (!_board->board[x][i])
 		{

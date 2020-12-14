@@ -12,8 +12,7 @@ copy c'tor
 */
 Checker::Checker(Checker& che)
 {
-    x = che.getX();
-    y = che.setY();
+    *this = che;
 }
 /*
 d'tor
@@ -56,4 +55,12 @@ void Checker::setX(int x) {
 */
 void Checker::setY(int y) {
     this->y = y;
+}
+/*
+the operator = of the class
+*/
+Checker& Checker::operator=( Checker& other)
+{
+    x = other.getX();
+    y = other.getY();
 }
