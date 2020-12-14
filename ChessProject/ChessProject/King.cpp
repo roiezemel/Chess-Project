@@ -1,14 +1,14 @@
 #include "King.h"
 
 /*
-c'tor
+c'tor of the class
 */
 King::King(Checker che, Board* board, int col, char type):
 Piece(che, board, col, type)
 {
 }
 /*
-d'tor
+d'tor of the class
 */
 King::~King()
 {
