@@ -1,4 +1,26 @@
 #include "Checker.h"
+/*
+c'tor
+*/
+Checker::Checker(int i, int j)
+{
+    x = i;
+    y = j;
+}
+/*
+copy c'tor
+*/
+Checker::Checker(Checker& che)
+{
+    x = che.getX();
+    y = che.setY();
+}
+/*
+d'tor
+*/
+Checker::~Checker()
+{
+}
 
 /*
     Get x.
