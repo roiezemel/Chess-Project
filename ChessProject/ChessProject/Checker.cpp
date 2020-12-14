@@ -1,4 +1,25 @@
 #include "Checker.h"
+/*
+c'tor
+*/
+Checker::Checker(int i, int j)
+{
+    x = i;
+    y = j;
+}
+/*
+copy c'tor
+*/
+Checker::Checker(Checker& che)
+{
+    *this = che;
+}
+/*
+d'tor
+*/
+Checker::~Checker()
+{
+}
 
 /*
     Get x.
@@ -34,4 +55,12 @@ void Checker::setX(int x) {
 */
 void Checker::setY(int y) {
     this->y = y;
+}
+/*
+the operator = of the class
+*/
+Checker& Checker::operator=( Checker& other)
+{
+    x = other.getX();
+    y = other.getY();
 }
