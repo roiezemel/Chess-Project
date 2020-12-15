@@ -1,6 +1,8 @@
 #pragma once
 #include <iostream>
 
+#define SIZE 8
+
 class Checker
 {
 
@@ -28,7 +30,7 @@ namespace std {
 			using std::hash;
 			using std::string;
 
-			return 0;
+			return k.getX() + k.getY() * SIZE;
 		}
 	};
 

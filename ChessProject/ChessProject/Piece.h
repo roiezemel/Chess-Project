@@ -15,6 +15,7 @@ public:
 	virtual char getType();
 	virtual std::unordered_set <Checker> getAllPossibleMoves() = 0;
 	Checker getPosition();
+	void setPosition(Checker c);
 protected:
 	Board* _board;
 	int _color;

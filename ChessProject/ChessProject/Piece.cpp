@@ -38,3 +38,10 @@ char Piece::getType()
 Checker Piece::getPosition() {
 	return _checker;
 }
+
+/*
+	s'ter
+*/
+void Piece::setPosition(Checker c) {
+	this->_checker = c;
+}

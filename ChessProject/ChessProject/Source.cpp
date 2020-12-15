@@ -7,14 +7,17 @@ in order to read and write information from and to the Backend
 #include "Pipe.h"
 #include <iostream>
 #include <thread>
+#include "Board.h"
+#include "Piece.h"
 
 using std::cout;
 using std::endl;
 using std::string;
 
+Checker getChecker(string msg, int pos);
 
-void main()
-{
+void main() {
+
 	srand(time_t(NULL));
 
 	
@@ -22,20 +25,17 @@ void main()
 	bool isConnect = p.connect();
 	
 	string ans;
-	while (!isConnect)
-	{
+	while (!isConnect) {
 		cout << "cant connect to graphics" << endl;
 		cout << "Do you try to connect again or exit? (0-try again, 1-exit)" << endl;
 		std::cin >> ans;
 
-		if (ans == "0")
-		{
+		if (ans == "0") {
 			cout << "trying connect again.." << endl;
 			Sleep(5000);
 			isConnect = p.connect();
 		}
-		else 
-		{
+		else {
 			p.close();
 			return;
 		}
@@ -43,37 +43,41 @@ void main()
 	
 
 	char msgToGraphics[1024];
-	// msgToGraphics should contain the board string accord the protocol
-	// YOUR CODE
+	Board board;
 
-	strcpy_s(msgToGraphics, "rnbkqbnrpppppppp################################PPPPPPPPRNBKQBNR1"); // just example...
-	
-	p.sendMessageToGraphics(msgToGraphics);   // send the board string
+	strcpy_s(msgToGraphics, board.getStringBoard().c_str());
+	p.sendMessageToGraphics(msgToGraphics);
 
-	// get message from graphics
 	string msgFromGraphics = p.getMessageFromGraphics();
 
-	while (msgFromGraphics != "quit")
-	{
-		// should handle the string the sent from graphics
-		// according the protocol. Ex: e2e4           (move e2 to e4)
-		
-		// YOUR CODE
-		strcpy_s(msgToGraphics, "YOUR CODE"); // msgToGraphics should contain the result of the operation
-
-		/******* JUST FOR EREZ DEBUGGING ******/
-		int r = rand() % 10; // just for debugging......
-		msgToGraphics[0] = (char)(1 + '0');
+	int color = 0, code = 0;
+	while (msgFromGraphics != "quit") {
+		Checker ch1 = getChecker(msgFromGraphics, 0);
+		Checker ch2 = getChecker(msgFromGraphics, 1);
+		code = board.move(color, ch1, ch2);
+		msgToGraphics[0] = code + '0';
 		msgToGraphics[1] = 0;
-		/******* JUST FOR EREZ DEBUGGING ******/
+		p.sendMessageToGraphics(msgToGraphics);
 
-
-		// return result to graphics		
-		p.sendMessageToGraphics(msgToGraphics);   
-
-		// get message from graphics
 		msgFromGraphics = p.getMessageFromGraphics();
+		if (code == 0 || code == 1 || code == 8)
+			color = !color;
 	}
 
 	p.close();
+	
 }
+
+/*
+	Translate gui's instructions into x and y checkers.
+	Input: gui's message and pos: 0 - source, 1 - destination.
+	Output: a checker.
+*/
+Checker getChecker(string msg, int pos) {
+	int i = pos * 2;
+	int x = msg[i] - 'a';
+	int y = msg[i + 1] - '0' - 1;
+	std::cout << x << ", " << y << std::endl;
+	return Checker(x, y);
+}
+
