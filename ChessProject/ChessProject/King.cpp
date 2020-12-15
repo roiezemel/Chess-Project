@@ -25,17 +25,19 @@ std::unordered_set<Checker> King::getAllPossibleMoves()
 	int y = _checker.getY();
 	int i = 0;
 	int j = 0;
-	for (i = x - 1; i <= x + 1 && i >= 0 && i < SIZE; i++)
+	for (i = x - 1; i <= x + 1; i++)
 	{
-		for (j = y - 1; j <= y + 1 && j >= 0 && j < SIZE; j++)
+		for (j = y - 1; j <= y + 1; j++)
 		{
-			if (!_board->board[i][j])
-			{
-				set.insert(Checker(i, j));
-			}
-			else if(_board->board[i][j]->getColor() != getColor())
-			{
-				set.insert(Checker(i, j));
+			if (0 <= i < SIZE && 0 <= j < SIZE) {
+				if (!_board->board[i][j])
+				{
+					set.insert(Checker(i, j));
+				}
+				else if (_board->board[i][j]->getColor() != getColor())
+				{
+					set.insert(Checker(i, j));
+				}
 			}
 		}
 	}

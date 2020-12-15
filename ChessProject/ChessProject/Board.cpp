@@ -109,15 +109,16 @@ int Board::move(int color, Checker c1, Checker c2) {
 
     std::vector<Piece*>* set = (bool)color ? &whites : &blacks;
     set->erase(std::remove(set->begin(), set->end(), eaten), set->end());
+    board[c2.getX()][c2.getY()]->setPosition(c2);
+
 
     if (isCheck(color)) { // If the current color is now threatened, the move is not valid.
         board[c1.getX()][c1.getY()] = board[c2.getX()][c2.getY()];
         board[c2.getX()][c2.getY()] = eaten;
         set->push_back(eaten);
+        board[c1.getX()][c1.getY()]->setPosition(c1);
         return 4;
     }
-
-    board[c2.getX()][c2.getY()]->setPosition(c2);
 
     if (eaten) {
         delete(eaten);
