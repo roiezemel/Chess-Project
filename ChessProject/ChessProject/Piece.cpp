@@ -4,7 +4,7 @@
 c'tor
 */
 Piece::Piece(Checker che, Board* board, int col, char type):
-	_checker(che)
+_checker(che.getX(), che.getY())
 {
 	_board = board;
 	_color = col;
@@ -33,4 +33,8 @@ output: the type
 char Piece::getType()
 {
 	return _type;
+}
+
+Checker Piece::getPosition() {
+	return _checker;
 }

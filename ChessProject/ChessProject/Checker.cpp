@@ -7,13 +7,7 @@ Checker::Checker(int i, int j)
     x = i;
     y = j;
 }
-/*
-copy c'tor
-*/
-Checker::Checker(Checker& che)
-{
-    *this = che;
-}
+
 /*
 d'tor
 */
@@ -63,4 +57,12 @@ Checker& Checker::operator=( Checker& other)
 {
     x = other.getX();
     y = other.getY();
+    return *this;
+}
+
+/*
+    o'tor ==
+*/
+bool Checker::operator==(const Checker& other) const {
+    return x == other.x && y == other.y;
 }

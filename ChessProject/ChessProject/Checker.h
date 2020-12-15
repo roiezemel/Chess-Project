@@ -9,7 +9,6 @@ private:
 	int y;
 public:
 	Checker(int i, int j);
-	Checker(Checker& che);
 	~Checker();
 	int getX() const;
 	int getY() const;
