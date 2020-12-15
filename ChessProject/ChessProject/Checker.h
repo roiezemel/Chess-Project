@@ -1,4 +1,6 @@
 #pragma once
+#include <iostream>
+
 class Checker
 {
 
@@ -9,9 +11,26 @@ public:
 	Checker(int i, int j);
 	Checker(Checker& che);
 	~Checker();
-	int getX();
-	int getY();
+	int getX() const;
+	int getY() const;
 	void setX(int x);
 	void setY(int y);
 	Checker& operator=( Checker& other);
+	bool operator==(const Checker& other) const;
+
 };
+
+namespace std {
+
+	template <>
+	struct hash<Checker> {
+		std::size_t operator()(const Checker& k) const {
+			using std::size_t;
+			using std::hash;
+			using std::string;
+
+			return 0;
+		}
+	};
+
+}

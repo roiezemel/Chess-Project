@@ -10,7 +10,7 @@ public:
 	Piece(Checker che, Board* board,int col, char type);
 	~Piece();
 	int getColor();
-	virtual bool isValidMove(Checker c1, Checker c2) = 0;
+	//virtual bool isValidMove(Checker c1, Checker c2) = 0;
 	virtual char getType();
 	virtual std::unordered_set <Checker> getAllPossibleMoves() = 0;
 protected:

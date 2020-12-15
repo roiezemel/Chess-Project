@@ -32,15 +32,18 @@ std::unordered_set<Checker> Pawn::getAllPossibleMoves() {
 
     if (0 <= yOp < BOARD_SIZE) {
         if (!_board->board[_checker.getX()][yOp]) {
-            result.insert(Checker(_checker.getX(), yOp));
+            Checker c(_checker.getX(), yOp);
+            result.insert(c);
         }
 
         if (_checker.getX() && _board->board[_checker.getX() - 1][yOp]) {
-            result.insert(Checker(_checker.getX() - 1, yOp));
+            Checker c(_checker.getX() - 1, yOp);
+            result.insert(c);
         }
 
         if (_checker.getX() + 1 < BOARD_SIZE && _board->board[_checker.getX() + 1][yOp]) {
-            result.insert(Checker(_checker.getX() + 1, yOp));
+            Checker c(_checker.getX() + 1, yOp);
+            result.insert(c);
         }
     }
 

@@ -5,7 +5,7 @@
 #include "Checker.h"
 #include <unordered_map>
 
-#define BOARD_SIZE
+#define SIZE 8
 
 class Piece;
 class Board {
@@ -17,7 +17,7 @@ private:
 	Piece* whiteKing;
 
 public:
-	Piece*** board;
+	Piece* board[SIZE][SIZE];
 
 	Board();
 	~Board();
@@ -28,25 +28,3 @@ public:
 
 
 };
-
-/*
-
-#include <boost/functional/hash.hpp>
-
-namespace std {
-  template <>
-  struct hash<Checker>
-  {
-	typedef Checker      argument_type;
-	typedef std::size_t  result_type;
-
-	result_type operator()(const Checker & t) const
-	{
-	  std::size_t val { 0 };
-	  boost::hash_combine(val,t.x);
-	  boost::hash_combine(val,t.y);
-	  return val;
-	}
-  };
-}
-*/

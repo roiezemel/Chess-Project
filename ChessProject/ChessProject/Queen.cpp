@@ -1,9 +1,9 @@
 #include "Queen.h"
 /*
-c'tor 
+c'tor
 */
 Queen::Queen(Checker che, Board* board, int col, char type) :
-Piece(che, board, col, type)
+	Piece(che, board, col, type)
 {
 }
 /*
@@ -21,8 +21,9 @@ std::unordered_set<Checker> Queen::getAllPossibleMoves()
 {
 	std::unordered_set<Checker> set1 = Bishop::getAllPossibleDiagonalMoves(_board, _checker);
 	std::unordered_set<Checker> set2 = Rook::getAllPossibleStraightMoves(_board, _checker);
-	for (Checker checker: set1)
+	for (auto& che : set1)
 	{
-
+		set2.insert(che);
 	}
+	return set2;
 }

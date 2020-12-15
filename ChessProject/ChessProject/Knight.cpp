@@ -1,4 +1,6 @@
 #include "Knight.h"
+
+
 /*
 c'tor
 */

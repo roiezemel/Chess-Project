@@ -26,7 +26,7 @@ Checker::~Checker()
     Input: none.
     Output: x.
 */
-int Checker::getX() {
+int Checker::getX() const {
     return x;
 }
 
@@ -35,7 +35,7 @@ int Checker::getX() {
     Input: none.
     Output: y.
 */
-int Checker::getY() {
+int Checker::getY() const {
     return y;
 }
 

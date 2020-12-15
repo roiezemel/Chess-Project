@@ -11,11 +11,6 @@
     Output: none.
 */
 Board::Board() {
-    int i = 0;
-    board = new Piece * *[BOARD_SIZE];
-    for (i = 0; i < BOARD_SIZE; i++) {
-        board[i] = new Piece * [BOARD_SIZE];
-    }
 
     // TODO: Put pieces in the right places, 
     // and add them them to their corresponding sets (whites or blacks).
@@ -27,13 +22,7 @@ Board::Board() {
     Input: none.
     Output: none.
 */
-Board::~Board() {
-    int i = 0;
-    for (i = 0; i < BOARD_SIZE; i++) {
-        delete[] board[i];
-    }
-    delete[] board;
-}
+Board::~Board() {}
 
 /*
     Move a piece from one checker to another.
