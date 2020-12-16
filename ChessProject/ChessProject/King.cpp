@@ -29,7 +29,7 @@ std::unordered_set<Checker> King::getAllPossibleMoves()
 	{
 		for (j = y - 1; j <= y + 1; j++)
 		{
-			if (0 <= i < SIZE && 0 <= j < SIZE) {
+			if (i >= 0 && i < SIZE && j >= 0 && j < SIZE) {
 				if (!_board->board[i][j])
 				{
 					set.insert(Checker(i, j));

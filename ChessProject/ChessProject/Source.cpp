@@ -77,7 +77,6 @@ Checker getChecker(string msg, int pos) {
 	int i = pos * 2;
 	int x = msg[i] - 'a';
 	int y = msg[i + 1] - '0' - 1;
-	std::cout << x << ", " << y << std::endl;
 	return Checker(x, y);
 }
 
