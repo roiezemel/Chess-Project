@@ -26,7 +26,7 @@ std::unordered_set<Checker> Pawn::getAllPossibleMoves() {
     int op = _color ? -1 : 1;
     int yOp = _checker.getY() + op;
 
-    if (_checker.getY() == _color ? 6 : 1 && !_board->board[_checker.getX()][_checker.getY() + op * 2]) {
+    if (_checker.getY() == (_color ? 6 : 1) && !_board->board[_checker.getX()][_checker.getY() + op * 2]) {
         result.insert(Checker(_checker.getX(), _checker.getY() + op * 2));
     }
 
