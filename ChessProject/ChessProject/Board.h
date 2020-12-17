@@ -22,9 +22,10 @@ public:
 	Board();
 	~Board();
 	int move(int color, Checker c1, Checker c2);
+	int validMove(int color, Checker c1, Checker c2);
 	bool isCheck(int color);
 	std::string getStringBoard();
 	std::unordered_map<Piece*, std::unordered_set<Checker>> getAllPossibleMoves(int color);
-
+	bool isMate(int color);
 
 };

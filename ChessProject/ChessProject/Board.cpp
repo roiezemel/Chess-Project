@@ -87,48 +87,74 @@ Board::~Board() {
     Output: none.
 */
 int Board::move(int color, Checker c1, Checker c2) {
+    int code = validMove(color, c1, c2);
+    if (code < 2)
+    {
+
+        Piece* eaten = board[c2.getX()][c2.getY()];
+        board[c2.getX()][c2.getY()] = board[c1.getX()][c1.getY()];
+        board[c1.getX()][c1.getY()] = 0;
+
+        std::vector<Piece*>* set = (bool)color ? &whites : &blacks;
+        set->erase(std::remove(set->begin(), set->end(), eaten), set->end());
+
+        board[c2.getX()][c2.getY()]->setPosition(c2);
+        if (eaten) {
+            delete(eaten);
+        }
+
+    }
+    return code;
+}
+/*
+the function check if move is valid
+input: the color and the checkers of the move
+output: the code of the movment
+*/
+int Board::validMove(int color, Checker c1, Checker c2)
+{
+    int code = 0;
     if (!board[c1.getX()][c1.getY()] || board[c1.getX()][c1.getY()]->getColor() != color) {
-        return 2;
+        code = 2;
     }
 
-    if (board[c2.getX()][c2.getY()] && board[c2.getX()][c2.getY()]->getColor() == color) {
-        return 3;
+    else if (board[c2.getX()][c2.getY()] && board[c2.getX()][c2.getY()]->getColor() == color) {
+        code = 3;
     }
 
-    if (c1 == c2) {
-        return 7;
+    else if (c1 == c2) {
+        code = 7;
     }
 
-    if (!board[c1.getX()][c1.getY()]->getAllPossibleMoves().count(c2)) {
-        return 6;
+    else if (!board[c1.getX()][c1.getY()]->getAllPossibleMoves().count(c2)) {
+        code = 6;
     }
-        
-    Piece* eaten = board[c2.getX()][c2.getY()];
-    board[c2.getX()][c2.getY()] = board[c1.getX()][c1.getY()];
-    board[c1.getX()][c1.getY()] = 0;
+    else
+    {
 
-    std::vector<Piece*>* set = (bool)color ? &whites : &blacks;
-    set->erase(std::remove(set->begin(), set->end(), eaten), set->end());
+        Piece* eaten = board[c2.getX()][c2.getY()];
+        board[c2.getX()][c2.getY()] = board[c1.getX()][c1.getY()];
+        board[c1.getX()][c1.getY()] = 0;
 
-    board[c2.getX()][c2.getY()]->setPosition(c2);
+        std::vector<Piece*>* set = (bool)color ? &whites : &blacks;
+        set->erase(std::remove(set->begin(), set->end(), eaten), set->end());
 
-    if (isCheck(color)) { // If the current color is now threatened, the move is not valid.
+        board[c2.getX()][c2.getY()]->setPosition(c2);
+
+
+        if (isCheck(color)) { // If the current color is now threatened, the move is not valid.
+            code = 4;
+        }
+        else if (isCheck(!color)) {
+            code = 1;
+        }
         board[c1.getX()][c1.getY()] = board[c2.getX()][c2.getY()];
         board[c2.getX()][c2.getY()] = eaten;
+        board[c1.getX()][c1.getY()]->setPosition(c1);
         if (eaten)
             set->push_back(eaten);
-        board[c1.getX()][c1.getY()]->setPosition(c1);
-        return 4;
     }
-
-    if (eaten) {
-        delete(eaten);
-    }
-
-    if (isCheck(!color)) {
-        return 1;
-    }
-    return 0;
+    return code;
 }
 
 /*
@@ -188,4 +214,30 @@ std::unordered_map<Piece*, std::unordered_set<Checker>> Board::getAllPossibleMov
     }
 
     return result;
+}
+/*
+check if there a mate
+input: the color
+output: bool
+*/
+bool Board::isMate(int color)
+{
+    bool mate = true;
+    int i = 0;
+    std::vector<Piece*> set = ((bool)color ? blacks : whites);
+    Piece* king = (bool)color ? blackKing : whiteKing;
+    Piece* temp = 0;
+
+    for (i = 0; i < set.size() && mate; i++)
+    {
+        temp = set[i];
+        for (auto& che : temp->getAllPossibleMoves())
+        {
+            if (validMove(color, temp->getPosition(), che) < 2)
+            {
+                mate = false;
+            }
+        }
+    } 
+    return mate;
 }
