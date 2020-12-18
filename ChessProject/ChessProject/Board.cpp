@@ -64,6 +64,10 @@ Board::Board() {
             board[i][j] = 0;
         }
     }
+
+    updateAllPossibleMoves(0);
+    updateAllPossibleMoves(1);
+
 }
 
 /*
@@ -80,6 +84,8 @@ Board::~Board() {
             }
         }
     }
+    delete(allPossibleMoves[0]);
+    delete(allPossibleMoves[1]);
 }
 
 /*
@@ -89,19 +95,23 @@ Board::~Board() {
     Output: none.
 */
 int Board::move(int color, Checker c1, Checker c2) {
+
+
     int code = validMove(color, c1, c2);
     
     if (code > 1)
         return code;
 
     Piece* eaten = movePiece(color, c1, c2);
-    
+
     if (eaten)
         delete(eaten);
 
+    updateAllPossibleMoves(!color);
+
     if (code && isMate(!color))
         return 8;
-
+    
     return code;
 }
 /*
@@ -111,6 +121,7 @@ output: the code of the movment
 */
 int Board::validMove(int color, Checker c1, Checker c2)
 {
+
     int code = 0;
     if (!board[c1.getX()][c1.getY()] || board[c1.getX()][c1.getY()]->getColor() != color) {
         code = 2;
@@ -124,24 +135,35 @@ int Board::validMove(int color, Checker c1, Checker c2)
         code = 7;
     }
 
-    else if (!board[c1.getX()][c1.getY()]->getAllPossibleMoves().count(c2)) {
+    else if (!((allPossibleMoves[color])->at(board[c1.getX()][c1.getY()]).count(c2))) {
         code = 6;
     }
     else {
 
         Piece* eaten = movePiece(color, c1, c2);
+        std::unordered_map <Piece*, std::unordered_set<Checker>>*
+            prevWhiteMoves = allPossibleMoves[0], * prevBlackMoves = allPossibleMoves[1];
 
+        allPossibleMoves[!color] = getAllPossibleMoves(!color);
         if (isCheck(color)) // If the current color is now threatened, the move is not valid.
             code = 4;
 
-        else if (isCheck(!color))
-            code = 1;
+        else {
+            allPossibleMoves[color] = getAllPossibleMoves(color);
+            if (isCheck(!color))
+                code = 1;
+            delete(allPossibleMoves[color]);
+        }
+
+        delete(allPossibleMoves[!color]);
 
         board[c1.getX()][c1.getY()] = board[c2.getX()][c2.getY()];
         board[c2.getX()][c2.getY()] = eaten;
         board[c1.getX()][c1.getY()]->setPosition(c1);
         if (eaten)
             sets[!color].push_back(eaten);
+        allPossibleMoves[0] = prevWhiteMoves;
+        allPossibleMoves[1] = prevBlackMoves;
     }
     return code;
 }
@@ -153,7 +175,7 @@ int Board::validMove(int color, Checker c1, Checker c2)
 */
 bool Board::isCheck(int color) { // colors: 0 = white, 1 = black
     for (Piece* piece : sets[!color]) {
-        if (piece->getAllPossibleMoves().count(kings[color]->getPosition())) {
+        if ((*allPossibleMoves[!color]).at(piece).count(kings[color]->getPosition())) {
             return true;
         }
     }
@@ -174,6 +196,18 @@ Piece* Board::movePiece(int color, Checker c1, Checker c2) {
 
     board[c2.getX()][c2.getY()]->setPosition(c2);
     return eaten;
+}
+
+/*
+    Update all possible moves of one of the colors.
+    Input: color.
+    Output: none.
+*/
+void Board::updateAllPossibleMoves(int color) {
+    if (allPossibleMoves[color])
+        delete(allPossibleMoves[color]);
+
+    allPossibleMoves[color] = getAllPossibleMoves(color);
 }
 
 /*
@@ -207,11 +241,12 @@ std::string Board::getStringBoard() {
     Input: a color.
     Output: map with pieces as keys, and their possible moves sets as values.
 */
-std::unordered_map<Piece*, std::unordered_set<Checker>> Board::getAllPossibleMoves(int color) {
-    std::unordered_map <Piece*, std::unordered_set<Checker>> result;
-    
+std::unordered_map<Piece*, std::unordered_set<Checker>>* Board::getAllPossibleMoves(int color) {
+    std::unordered_map <Piece*, std::unordered_set<Checker>>* result = 
+        new std::unordered_map <Piece*, std::unordered_set<Checker>>;
+
     for (Piece* piece : sets[color])
-        result.insert({ piece, piece->getAllPossibleMoves() });
+        result->insert({piece, piece->getAllPossibleMoves()});
 
     return result;
 }
@@ -229,7 +264,7 @@ bool Board::isMate(int color)
     for (i = 0; i < sets[color].size() && mate; i++)
     {
         temp = sets[color][i];
-        for (auto& che : temp->getAllPossibleMoves())
+        for (auto& che : (*(allPossibleMoves[color])).at(temp))
         {
             if (validMove(color, temp->getPosition(), che) < 2)
             {

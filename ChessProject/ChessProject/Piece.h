@@ -24,4 +24,14 @@ protected:
 };
 
 
+namespace std {
 
+	template<>
+	struct hash<Piece*> {
+		size_t operator()(const Piece* val) const {
+			static const size_t shift = (size_t)log2(1 + sizeof(Piece));
+			return (size_t)(val) >> shift;
+		}
+	};
+
+}
