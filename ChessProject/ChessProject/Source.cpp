@@ -19,7 +19,6 @@ Checker getChecker(string msg, int pos);
 void main() {
 
 	srand(time_t(NULL));
-
 	
 	Pipe p;
 	bool isConnect = p.connect();
@@ -45,7 +44,7 @@ void main() {
 	char msgToGraphics[1024];
 	Board board;
 
-	strcpy_s(msgToGraphics, board.getStringBoard().c_str());
+	strcpy_s(msgToGraphics, Board::initalBoard.c_str());
 	p.sendMessageToGraphics(msgToGraphics);
 
 	string msgFromGraphics = p.getMessageFromGraphics();

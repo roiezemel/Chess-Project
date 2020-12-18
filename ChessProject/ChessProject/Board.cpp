@@ -8,66 +8,41 @@
 #define BOARD_SIZE 8
 
 
+const std::string Board::initalBoard = "rnbqkbnrpppppppp################################PPPPPPPPRNBQKBNR0";
 
 /*
     Initialize board.
     Input: none.
     Output: none.
 */
-Board::Board() {
+Board::Board() : Board(Board::initalBoard) {}
 
-    int i = 0, j = 0, line = 0, place = 0;
-    for (i = 0; i < 2; i++) {        
-        line = i * 7;
-
-        for (j = 0; j < 2; j++) {
-            place = j * 7;
-            Checker c(place, line);
-            Rook* r = new Rook(c, this, i, 'r');
-            board[place][line] = r;
-            sets[i].push_back(r);
-
-            Checker c1(place + j * -2 + 1, line);
-            Knight* k = new Knight(c1, this, i, 'n');
-            board[place + j * -2 + 1][line] = k;
-            sets[i].push_back(k);
-
-            Checker c2(place + j * -4 + 2, line);
-            Bishop* b = new Bishop(c2, this, i, 'b');
-            board[place + j * -4 + 2][line] = b;
-            sets[i].push_back(b);
-        }
-        
-        Checker c3(3, line);
-        Queen* q = new Queen(c3, this, i, 'q');
-        board[3][line] = q;
-        sets[i].push_back(q);
-
-        Checker c4(4, line);
-        King* ki = new King(c4, this, i, 'k');
-        board[4][line] = ki;
-        sets[i].push_back(ki);
-        kings[i] = ki;
-
-
-        line = i * 5 + 1;
-        for (j = 0; j < BOARD_SIZE; j++) {
-            Checker c5(j, line);
-            Pawn* p = new Pawn(c5, this, i, 'p');
-            board[j][line] = p;
-            sets[i].push_back(p);
-        }
-    }
-
+/*
+    Initialize a board.
+    Input: initial board string.
+    Output: none.
+*/
+Board::Board(std::string initialBoard) {
+    int i = 0, j = 0;
+    Piece* temp = 0;
+    char type = 0;
     for (i = 0; i < SIZE; i++) {
-        for (j = 2; j < 6; j++) {
-            board[i][j] = 0;
+        for (j = 0; j < SIZE; j++) {
+            type = initalBoard[(SIZE - i - 1) * SIZE + j];
+            if (type != '#') {
+                temp = Board::createPiece(type, j, i, this);
+                sets[type >= 'a'].push_back(temp);
+            }
+            else
+                temp = 0;
+            board[j][i] = temp;
         }
     }
+    kings[0] = board[4][0];
+    kings[1] = board[4][7];
 
     updateAllPossibleMoves(0);
     updateAllPossibleMoves(1);
-
 }
 
 /*
@@ -250,6 +225,7 @@ std::unordered_map<Piece*, std::unordered_set<Checker>>* Board::getAllPossibleMo
 
     return result;
 }
+
 /*
 check if there a mate
 input: the color
@@ -273,4 +249,38 @@ bool Board::isMate(int color)
         }
     } 
     return mate;
+}
+
+/*
+    Create a piece according to a type char.
+    Input: type, i and j positions, and pointer to a board.
+    Output: piece.
+*/
+Piece* Board::createPiece(char type, int i, int j, Board* board) {
+    Checker c(i, j);
+    int color = type >= 'a';
+    type = color ? type : type + ('a' - 'A');
+    Piece* temp = 0;
+
+    switch (type) {
+    case 'r':
+        temp = new Rook(c, board, color, type);
+        break;
+    case 'n':
+        temp = new Knight(c, board, color, type);
+        break;
+    case 'b':
+        temp = new Bishop(c, board, color, type);
+        break;
+    case 'q':
+        temp = new Queen(c, board, color, type);
+        break;
+    case 'k':
+        temp = new King(c, board, color, type);
+        break;
+    case 'p':
+        temp = new Pawn(c, board, color, type);
+        break;
+    }
+    return temp;
 }

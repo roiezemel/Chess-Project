@@ -12,8 +12,10 @@ class Board {
 
 public:
 	Piece* board[SIZE][SIZE];
-
+	const static std::string initalBoard;
+	
 	Board();
+	Board(std::string initialBoard);
 	~Board();
 	int move(int color, Checker c1, Checker c2);
 	std::string getStringBoard();
@@ -28,6 +30,7 @@ private:
 	bool isCheck(int color);
 	Piece* movePiece(int color, Checker c1, Checker c2);
 	void updateAllPossibleMoves(int color);
+	static Piece* createPiece(char type, int i, int j, Board* board);
 
 };
 
