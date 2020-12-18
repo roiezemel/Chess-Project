@@ -17,9 +17,7 @@
 Board::Board() {
 
     int i = 0, j = 0, line = 0, place = 0;
-    for (i = 0; i < 2; i++) {
-        std::vector<Piece*>* set = (bool)i ? &blacks : &whites;
-        
+    for (i = 0; i < 2; i++) {        
         line = i * 7;
 
         for (j = 0; j < 2; j++) {
@@ -27,28 +25,29 @@ Board::Board() {
             Checker c(place, line);
             Rook* r = new Rook(c, this, i, 'r');
             board[place][line] = r;
-            set->push_back(r);
+            sets[i].push_back(r);
 
             Checker c1(place + j * -2 + 1, line);
             Knight* k = new Knight(c1, this, i, 'n');
             board[place + j * -2 + 1][line] = k;
-            set->push_back(k);
+            sets[i].push_back(k);
 
             Checker c2(place + j * -4 + 2, line);
             Bishop* b = new Bishop(c2, this, i, 'b');
             board[place + j * -4 + 2][line] = b;
-            set->push_back(b);
+            sets[i].push_back(b);
         }
         
         Checker c3(3, line);
         Queen* q = new Queen(c3, this, i, 'q');
         board[3][line] = q;
-        set->push_back(q);
+        sets[i].push_back(q);
 
         Checker c4(4, line);
         King* ki = new King(c4, this, i, 'k');
         board[4][line] = ki;
-        set->push_back(ki);
+        sets[i].push_back(ki);
+        kings[i] = ki;
 
 
         line = i * 5 + 1;
@@ -56,12 +55,15 @@ Board::Board() {
             Checker c5(j, line);
             Pawn* p = new Pawn(c5, this, i, 'p');
             board[j][line] = p;
-            set->push_back(p);
+            sets[i].push_back(p);
         }
     }
 
-    whiteKing = board[4][0];
-    blackKing = board[4][7];
+    for (i = 0; i < SIZE; i++) {
+        for (j = 2; j < 6; j++) {
+            board[i][j] = 0;
+        }
+    }
 }
 
 /*
@@ -88,22 +90,18 @@ Board::~Board() {
 */
 int Board::move(int color, Checker c1, Checker c2) {
     int code = validMove(color, c1, c2);
-    if (code < 2)
-    {
+    
+    if (code > 1)
+        return code;
 
-        Piece* eaten = board[c2.getX()][c2.getY()];
-        board[c2.getX()][c2.getY()] = board[c1.getX()][c1.getY()];
-        board[c1.getX()][c1.getY()] = 0;
+    Piece* eaten = movePiece(color, c1, c2);
+    
+    if (eaten)
+        delete(eaten);
 
-        std::vector<Piece*>* set = (bool)color ? &whites : &blacks;
-        set->erase(std::remove(set->begin(), set->end(), eaten), set->end());
+    if (code && isMate(!color))
+        return 8;
 
-        board[c2.getX()][c2.getY()]->setPosition(c2);
-        if (eaten) {
-            delete(eaten);
-        }
-
-    }
     return code;
 }
 /*
@@ -129,30 +127,21 @@ int Board::validMove(int color, Checker c1, Checker c2)
     else if (!board[c1.getX()][c1.getY()]->getAllPossibleMoves().count(c2)) {
         code = 6;
     }
-    else
-    {
+    else {
 
-        Piece* eaten = board[c2.getX()][c2.getY()];
-        board[c2.getX()][c2.getY()] = board[c1.getX()][c1.getY()];
-        board[c1.getX()][c1.getY()] = 0;
+        Piece* eaten = movePiece(color, c1, c2);
 
-        std::vector<Piece*>* set = (bool)color ? &whites : &blacks;
-        set->erase(std::remove(set->begin(), set->end(), eaten), set->end());
-
-        board[c2.getX()][c2.getY()]->setPosition(c2);
-
-
-        if (isCheck(color)) { // If the current color is now threatened, the move is not valid.
+        if (isCheck(color)) // If the current color is now threatened, the move is not valid.
             code = 4;
-        }
-        else if (isCheck(!color)) {
+
+        else if (isCheck(!color))
             code = 1;
-        }
+
         board[c1.getX()][c1.getY()] = board[c2.getX()][c2.getY()];
         board[c2.getX()][c2.getY()] = eaten;
         board[c1.getX()][c1.getY()]->setPosition(c1);
         if (eaten)
-            set->push_back(eaten);
+            sets[!color].push_back(eaten);
     }
     return code;
 }
@@ -163,15 +152,28 @@ int Board::validMove(int color, Checker c1, Checker c2)
     Output: true if the color's king is threatened by some other piece, false otherwise.
 */
 bool Board::isCheck(int color) { // colors: 0 = white, 1 = black
-    std::vector<Piece*>* opponentSet = &((bool) color ? whites : blacks);
-    Piece* king = (bool)color ? blackKing : whiteKing;
-
-    for (Piece* piece : *opponentSet) {
-        if (piece->getAllPossibleMoves().count(king->getPosition())) {
+    for (Piece* piece : sets[!color]) {
+        if (piece->getAllPossibleMoves().count(kings[color]->getPosition())) {
             return true;
         }
     }
     return false;
+}
+
+/*
+    Move piece from one checker to another.
+    Input: piece's color, source and destination checkers.
+    Output: pointer to eaten piece, 0 if no piece was eaten.
+*/
+Piece* Board::movePiece(int color, Checker c1, Checker c2) {
+    Piece* eaten = board[c2.getX()][c2.getY()];
+    board[c2.getX()][c2.getY()] = board[c1.getX()][c1.getY()];
+    board[c1.getX()][c1.getY()] = 0;
+
+    sets[!color].erase(std::remove(sets[!color].begin(), sets[!color].end(), eaten), sets[!color].end());
+
+    board[c2.getX()][c2.getY()]->setPosition(c2);
+    return eaten;
 }
 
 /*
@@ -206,12 +208,10 @@ std::string Board::getStringBoard() {
     Output: map with pieces as keys, and their possible moves sets as values.
 */
 std::unordered_map<Piece*, std::unordered_set<Checker>> Board::getAllPossibleMoves(int color) {
-    std::vector<Piece*>* set = &((bool)color ? blacks : whites);
     std::unordered_map <Piece*, std::unordered_set<Checker>> result;
     
-    for (Piece* piece : *set) {
+    for (Piece* piece : sets[color])
         result.insert({ piece, piece->getAllPossibleMoves() });
-    }
 
     return result;
 }
@@ -224,13 +224,11 @@ bool Board::isMate(int color)
 {
     bool mate = true;
     int i = 0;
-    std::vector<Piece*> set = ((bool)color ? blacks : whites);
-    Piece* king = (bool)color ? blackKing : whiteKing;
     Piece* temp = 0;
 
-    for (i = 0; i < set.size() && mate; i++)
+    for (i = 0; i < sets[color].size() && mate; i++)
     {
-        temp = set[i];
+        temp = sets[color][i];
         for (auto& che : temp->getAllPossibleMoves())
         {
             if (validMove(color, temp->getPosition(), che) < 2)

@@ -56,25 +56,14 @@ void main() {
 		Checker ch2 = getChecker(msgFromGraphics, 1);
 		code = board.move(color, ch1, ch2);
 
-
-		if (code == 0 || code == 1 || code == 8)
-		{
-			color = !color;
-			if (code == 1)
-			{
-				if (board.isMate(color))
-				{
-					code = 8;
-					
-				}
-
-			}
-		}
 		msgToGraphics[0] = code + '0';
 		msgToGraphics[1] = 0;
 		p.sendMessageToGraphics(msgToGraphics);
 
 		msgFromGraphics = p.getMessageFromGraphics();
+
+		if (code < 2)
+			color = !color;
 	}
 
 	p.close();
