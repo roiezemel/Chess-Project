@@ -64,9 +64,8 @@ void main() {
 		else
 			code = board.move(color, ch1, ch2);
 		
-		if (board.isCastling() && castlingCode == -1) {
+		if (board.isCastling() && castlingCode == -1)
 			castlingCode = code;
-		}
 
 		msgToGraphics[0] = code + '0';
 		msgToGraphics[1] = 0;
