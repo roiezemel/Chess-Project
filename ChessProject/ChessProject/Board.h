@@ -21,6 +21,7 @@ public:
 	std::string getStringBoard();
 	std::unordered_map<Piece*, std::unordered_set<Checker>>* getAllPossibleMoves(int color);
 	bool isMate(int color);
+	bool isCastling();
 	
 private:
 	std::vector<Piece*> sets[2];
@@ -31,6 +32,9 @@ private:
 	Piece* movePiece(int color, Checker c1, Checker c2);
 	void updateAllPossibleMoves(int color);
 	static Piece* createPiece(char type, int i, int j, Board* board);
+	int isCheckBothSides(int color);
+	int specialMove(int color, Checker c1, Checker c2);
+	bool castling = false;
 
 };
 

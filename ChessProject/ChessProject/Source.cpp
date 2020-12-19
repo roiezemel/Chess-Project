@@ -49,11 +49,24 @@ void main() {
 
 	string msgFromGraphics = p.getMessageFromGraphics();
 
-	int color = 0, code = 0;
+	int color = 0, code = 0, castlingCode = -1;
 	while (msgFromGraphics != "quit") {
 		Checker ch1 = getChecker(msgFromGraphics, 0);
 		Checker ch2 = getChecker(msgFromGraphics, 1);
-		code = board.move(color, ch1, ch2);
+
+		if (board.isCastling()) {
+			code = board.move(color, ch1, ch2);
+			if (!code) {
+				code = castlingCode;
+				castlingCode = -1;
+			}
+		}
+		else
+			code = board.move(color, ch1, ch2);
+		
+		if (board.isCastling() && castlingCode == -1) {
+			castlingCode = code;
+		}
 
 		msgToGraphics[0] = code + '0';
 		msgToGraphics[1] = 0;
@@ -61,7 +74,7 @@ void main() {
 
 		msgFromGraphics = p.getMessageFromGraphics();
 
-		if (code < 2)
+		if (code < 2 && !board.isCastling())
 			color = !color;
 	}
 

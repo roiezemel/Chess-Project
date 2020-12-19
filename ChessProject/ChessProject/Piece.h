@@ -16,11 +16,15 @@ public:
 	virtual std::unordered_set <Checker> getAllPossibleMoves() = 0;
 	Checker getPosition();
 	void setPosition(Checker c);
+	void setMoves(int moves);
+	int getMoves();
+
 protected:
 	Board* _board;
 	int _color;
 	char _type;
 	Checker _checker;
+	int moves = 0;
 };
 
 

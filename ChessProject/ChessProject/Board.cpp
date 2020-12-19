@@ -72,20 +72,35 @@ Board::~Board() {
 int Board::move(int color, Checker c1, Checker c2) {
 
 
+
     int code = validMove(color, c1, c2);
-    
+
+    if (code == 6) {
+        if (!castling) {
+            int castlingCode = specialMove(color, c1, c2);
+            if (castlingCode >= 0)
+                code = castlingCode;
+        }
+        else if (!specialMove(color, c1, c2))
+            code = 0;
+    }
+
     if (code > 1)
         return code;
-
+    
     Piece* eaten = movePiece(color, c1, c2);
-
+    
+    board[c2.getX()][c2.getY()]->setMoves(board[c2.getX()][c2.getY()]->getMoves() + 1);
+    
     if (eaten)
         delete(eaten);
 
-    updateAllPossibleMoves(!color);
+    if (!castling) {
+        updateAllPossibleMoves(!color);
 
-    if (code && isMate(!color))
-        return 8;
+        if (code && isMate(!color))
+            return 8;
+    }
     
     return code;
 }
@@ -110,35 +125,20 @@ int Board::validMove(int color, Checker c1, Checker c2)
         code = 7;
     }
 
-    else if (!((allPossibleMoves[color])->at(board[c1.getX()][c1.getY()]).count(c2))) {
+    else if (!((allPossibleMoves[color])->at(board[c1.getX()][c1.getY()]).count(c2)) || castling) {
         code = 6;
     }
     else {
 
         Piece* eaten = movePiece(color, c1, c2);
-        std::unordered_map <Piece*, std::unordered_set<Checker>>*
-            prevWhiteMoves = allPossibleMoves[0], * prevBlackMoves = allPossibleMoves[1];
-
-        allPossibleMoves[!color] = getAllPossibleMoves(!color);
-        if (isCheck(color)) // If the current color is now threatened, the move is not valid.
-            code = 4;
-
-        else {
-            allPossibleMoves[color] = getAllPossibleMoves(color);
-            if (isCheck(!color))
-                code = 1;
-            delete(allPossibleMoves[color]);
-        }
-
-        delete(allPossibleMoves[!color]);
-
+        
+        code = isCheckBothSides(color);
+        
         board[c1.getX()][c1.getY()] = board[c2.getX()][c2.getY()];
         board[c2.getX()][c2.getY()] = eaten;
         board[c1.getX()][c1.getY()]->setPosition(c1);
         if (eaten)
             sets[!color].push_back(eaten);
-        allPossibleMoves[0] = prevWhiteMoves;
-        allPossibleMoves[1] = prevBlackMoves;
     }
     return code;
 }
@@ -158,6 +158,89 @@ bool Board::isCheck(int color) { // colors: 0 = white, 1 = black
 }
 
 /*
+    Check if one of the colors' king is in check and return the corresponding code.
+    Input: color.
+    Output: code.s
+*/
+int Board::isCheckBothSides(int color) {
+    int code = 0;
+    std::unordered_map <Piece*, std::unordered_set<Checker>>*
+        prevWhiteMoves = allPossibleMoves[0], * prevBlackMoves = allPossibleMoves[1];
+
+    allPossibleMoves[!color] = getAllPossibleMoves(!color);
+    if (isCheck(color)) // If the current color is now threatened, the move is not valid.
+        code = 4;
+
+    else {
+        allPossibleMoves[color] = getAllPossibleMoves(color);
+        if (isCheck(!color))
+            code = 1;
+        delete(allPossibleMoves[color]);
+    }
+
+    delete(allPossibleMoves[!color]);
+
+    allPossibleMoves[0] = prevWhiteMoves;
+    allPossibleMoves[1] = prevBlackMoves;
+
+    return code;
+}
+
+int Board::specialMove(int color, Checker c1, Checker c2) {
+    Checker* rc1 = 0;
+    Checker* rc2 = 0;
+    int code = -1;
+    if (!castling && board[c1.getX()][c1.getY()] == kings[color] && !kings[color]->getMoves() && c1.getY() == c2.getY()) {
+        if (c2.getX() == c1.getX() + 2 && board[7][c2.getY()] 
+            && board[7][c2.getY()]->getType() == 'r'
+            && !board[7][c2.getY()]->getMoves()
+            && !board[6][c2.getY()]
+            && !board[5][c2.getY()]) {
+            rc1 = &Checker(7, c2.getY());
+            rc2 = &Checker(5, c2.getY());
+        }
+        else if (c2.getX() == c1.getX() - 2 && board[0][c2.getY()]
+            && board[0][c2.getY()]->getType() == 'r'
+            && !board[0][c2.getY()]->getMoves()
+            && !board[1][c2.getY()]
+            && !board[2][c2.getY()]
+            && !board[3][c2.getY()]) {
+            rc1 = &Checker(7, c2.getY());
+            rc2 = &Checker(5, c2.getY());
+        }
+    }
+    else if (castling && board[c1.getX()][c1.getY()]
+        && board[c1.getX()][c1.getY()]->getType() == 'r'
+        && ((kings[color]->getPosition().getX() == 6 
+            && c2.getX() == 5 && c1.getX() == 7) || 
+            (kings[color]->getPosition().getX() == 2 
+                && c2.getX() == 3 && c1.getX() == 0)) ) {
+        castling = false;
+        code = 0;
+    }
+
+    if (rc1) {
+        movePiece(color, c1, c2);
+        movePiece(color, *rc1, *rc2);
+        code = isCheckBothSides(color);
+        
+        board[rc1->getX()][rc1->getY()] = board[rc2->getX()][rc2->getY()];
+        board[rc2->getX()][rc2->getY()] = 0;
+        board[rc1->getX()][rc1->getY()]->setPosition(*rc1);
+
+        board[c1.getX()][c1.getY()] = board[c2.getX()][c2.getY()];
+        board[c2.getX()][c2.getY()] = 0;
+        board[c1.getX()][c1.getY()]->setPosition(c1);
+
+        if (code < 2) {
+            castling = true;
+        }
+    }
+
+    return code;
+}
+
+/*
     Move piece from one checker to another.
     Input: piece's color, source and destination checkers.
     Output: pointer to eaten piece, 0 if no piece was eaten.
@@ -167,7 +250,8 @@ Piece* Board::movePiece(int color, Checker c1, Checker c2) {
     board[c2.getX()][c2.getY()] = board[c1.getX()][c1.getY()];
     board[c1.getX()][c1.getY()] = 0;
 
-    sets[!color].erase(std::remove(sets[!color].begin(), sets[!color].end(), eaten), sets[!color].end());
+    if (eaten)
+        sets[!color].erase(std::remove(sets[!color].begin(), sets[!color].end(), eaten), sets[!color].end());
 
     board[c2.getX()][c2.getY()]->setPosition(c2);
     return eaten;
@@ -252,6 +336,15 @@ bool Board::isMate(int color)
 }
 
 /*
+    Is castling.
+    Input: none.
+    Output: is castling.
+*/
+bool Board::isCastling() {
+    return castling;
+}
+
+/*
     Create a piece according to a type char.
     Input: type, i and j positions, and pointer to a board.
     Output: piece.
@@ -284,3 +377,4 @@ Piece* Board::createPiece(char type, int i, int j, Board* board) {
     }
     return temp;
 }
+

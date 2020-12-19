@@ -45,3 +45,21 @@ Checker Piece::getPosition() {
 void Piece::setPosition(Checker c) {
 	this->_checker = c;
 }
+
+/*
+	Set moves.
+	Input: moves.
+	Output: none.
+*/
+void Piece::setMoves(int moves) {
+	this->moves = moves;
+}
+
+/*
+	Get moves.
+	Input: none.
+	Output: moves.
+*/
+int Piece::getMoves() {
+	return moves;
+}
