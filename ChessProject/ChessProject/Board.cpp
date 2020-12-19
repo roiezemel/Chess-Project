@@ -76,13 +76,9 @@ int Board::move(int color, Checker c1, Checker c2) {
     int code = validMove(color, c1, c2);
 
     if (code == 6) {
-        if (!castling) {
-            int castlingCode = specialMove(color, c1, c2);
-            if (castlingCode >= 0)
-                code = castlingCode;
-        }
-        else if (!specialMove(color, c1, c2))
-            code = 0;
+        int castlingCode = specialMove(color, c1, c2);
+        if (castlingCode >= 0)
+            return castlingCode;
     }
 
     if (code > 1)
@@ -95,12 +91,10 @@ int Board::move(int color, Checker c1, Checker c2) {
     if (eaten)
         delete(eaten);
 
-    if (!castling) {
-        updateAllPossibleMoves(!color);
+    updateAllPossibleMoves(!color);
 
-        if (code && isMate(!color))
-            return 8;
-    }
+    if (code && isMate(!color))
+        return 8;
     
     return code;
 }
@@ -125,7 +119,7 @@ int Board::validMove(int color, Checker c1, Checker c2)
         code = 7;
     }
 
-    else if (!((allPossibleMoves[color])->at(board[c1.getX()][c1.getY()]).count(c2)) || castling) {
+    else if (!((allPossibleMoves[color])->at(board[c1.getX()][c1.getY()]).count(c2))) {
         code = 6;
     }
     else {
@@ -186,6 +180,11 @@ int Board::isCheckBothSides(int color) {
     return code;
 }
 
+/*
+    Check if the move is a special move (like castling).
+    Input: color, source and destination checkers.
+    Output: move code.
+*/
 int Board::specialMove(int color, Checker c1, Checker c2) {
     Checker* rc1 = 0;
     Checker* rc2 = 0;
@@ -209,31 +208,28 @@ int Board::specialMove(int color, Checker c1, Checker c2) {
             rc2 = &Checker(5, c2.getY());
         }
     }
-    else if (castling && board[c1.getX()][c1.getY()]
-        && board[c1.getX()][c1.getY()]->getType() == 'r'
-        && ((kings[color]->getPosition().getX() == 6 
-            && c2.getX() == 5 && c1.getX() == 7) || 
-            (kings[color]->getPosition().getX() == 2 
-                && c2.getX() == 3 && c1.getX() == 0)) ) {
-        castling = false;
-        code = 0;
-    }
 
     if (rc1) {
         movePiece(color, c1, c2);
         movePiece(color, *rc1, *rc2);
         code = isCheckBothSides(color);
         
-        board[rc1->getX()][rc1->getY()] = board[rc2->getX()][rc2->getY()];
-        board[rc2->getX()][rc2->getY()] = 0;
-        board[rc1->getX()][rc1->getY()]->setPosition(*rc1);
+        if (code > 1) {
+            board[rc1->getX()][rc1->getY()] = board[rc2->getX()][rc2->getY()];
+            board[rc2->getX()][rc2->getY()] = 0;
+            board[rc1->getX()][rc1->getY()]->setPosition(*rc1);
 
-        board[c1.getX()][c1.getY()] = board[c2.getX()][c2.getY()];
-        board[c2.getX()][c2.getY()] = 0;
-        board[c1.getX()][c1.getY()]->setPosition(c1);
+            board[c1.getX()][c1.getY()] = board[c2.getX()][c2.getY()];
+            board[c2.getX()][c2.getY()] = 0;
+            board[c1.getX()][c1.getY()]->setPosition(c1);
+        }
+        else {
+            updateAllPossibleMoves(!color);
 
-        if (code < 2) {
-            castling = true;
+            if (code && isMate(!color))
+                code = 8;
+
+            code += 9;
         }
     }
 

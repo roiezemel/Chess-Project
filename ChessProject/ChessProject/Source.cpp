@@ -19,7 +19,7 @@ Checker getChecker(string msg, int pos);
 void main() {
 
 	srand(time_t(NULL));
-	
+
 	Pipe p;
 	bool isConnect = p.connect();
 	
@@ -50,30 +50,27 @@ void main() {
 	string msgFromGraphics = p.getMessageFromGraphics();
 
 	int color = 0, code = 0, castlingCode = -1;
+	std::string msg;
 	while (msgFromGraphics != "quit") {
 		Checker ch1 = getChecker(msgFromGraphics, 0);
 		Checker ch2 = getChecker(msgFromGraphics, 1);
 
-		if (board.isCastling()) {
-			code = board.move(color, ch1, ch2);
-			if (!code) {
-				code = castlingCode;
-				castlingCode = -1;
-			}
-		}
-		else
-			code = board.move(color, ch1, ch2);
-		
-		if (board.isCastling() && castlingCode == -1)
-			castlingCode = code;
+		code = board.move(color, ch1, ch2);
 
-		msgToGraphics[0] = code + '0';
-		msgToGraphics[1] = 0;
+		if (code >= 9) {
+			code -= 9;
+			msg = (char)(code + '0') + board.getStringBoard();
+		}
+		else {
+			msg = (code + '0');
+		}
+
+		strcpy_s(msgToGraphics, msg.c_str());
 		p.sendMessageToGraphics(msgToGraphics);
 
 		msgFromGraphics = p.getMessageFromGraphics();
 
-		if (code < 2 && !board.isCastling())
+		if (code < 2)
 			color = !color;
 	}
 
