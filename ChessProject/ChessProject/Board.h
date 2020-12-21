@@ -22,14 +22,14 @@ public:
 	std::unordered_map<Piece*, std::unordered_set<Checker>>* getAllPossibleMoves(int color);
 	bool isMate(int color);
 	bool isCastling();
-	
-private:
+	Piece* movePiece(int color, Checker c1, Checker c2);
 	std::vector<Piece*> sets[2];
+private:
+	
 	Piece* kings[2];
 	std::unordered_map <Piece*, std::unordered_set<Checker>>* allPossibleMoves[2] = {0, 0};
 	int validMove(int color, Checker c1, Checker c2);
 	bool isCheck(int color);
-	Piece* movePiece(int color, Checker c1, Checker c2);
 	void updateAllPossibleMoves(int color);
 	static Piece* createPiece(char type, int i, int j, Board* board);
 	int isCheckBothSides(int color);
