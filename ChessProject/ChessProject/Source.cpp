@@ -16,6 +16,7 @@ using std::endl;
 using std::string;
 
 Checker getChecker(string msg, int pos);
+string createGuiMessage(move m, int code);
 
 void main() {
 
@@ -67,10 +68,10 @@ void main() {
 			msg = (code + '0');
 		}
 
-		if (!color) {
+		if (code < 2) {
 			move m = mm.getBestMove(2, 1);
 			board.move(1, m.src, m.dst);
-			msg = (char)(code + '0') + board.getStringBoard();
+			msg = createGuiMessage(m, code);
 		}
 
 		strcpy_s(msgToGraphics, msg.c_str());
@@ -94,5 +95,15 @@ Checker getChecker(string msg, int pos) {
 	int x = msg[i] - 'a';
 	int y = msg[i + 1] - '0' - 1;
 	return Checker(x, y);
+}
+
+string createGuiMessage(move m, int code) {
+	string result;
+	result += code + '0';
+	result += m.src.getX() + '0';
+	result += 7 - m.src.getY() + '0';
+	result += m.dst.getX() + '0';
+	result += 7 - m.dst.getY() + '0';
+	return result;
 }
 
