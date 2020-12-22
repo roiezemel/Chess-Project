@@ -68,14 +68,16 @@ void main() {
 			msg = (code + '0');
 		}
 
-		if (code < 2) {
-			move m = mm.getBestMove(2, 1);
-			board.move(1, m.src, m.dst);
-			msg = createGuiMessage(m, code);
-		}
-
 		strcpy_s(msgToGraphics, msg.c_str());
 		p.sendMessageToGraphics(msgToGraphics);
+
+		if (code < 2) {
+			move m = mm.getBestMove(2, 1);
+			code = board.move(1, m.src, m.dst);
+			msg = createGuiMessage(m, code);
+			strcpy_s(msgToGraphics, msg.c_str());
+			p.sendMessageToGraphics(msgToGraphics);
+		}
 
 		msgFromGraphics = p.getMessageFromGraphics();
 		
