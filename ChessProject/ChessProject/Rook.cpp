@@ -35,7 +35,6 @@ std::unordered_set<Checker> Rook::getAllPossibleStraightMoves(Board* _board, Che
 	int y = _checker.getY();
 	int _color = _board->board[x][y]->getColor();
 	std::unordered_set<Checker> set;
-	set.insert(Checker(x, y));
 
 	for (i = x + 1; i < SIZE && flag; i++)
 	{

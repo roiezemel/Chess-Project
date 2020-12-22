@@ -9,6 +9,7 @@ in order to read and write information from and to the Backend
 #include <thread>
 #include "Board.h"
 #include "Piece.h"
+#include "MiniMax.h"
 
 using std::cout;
 using std::endl;
@@ -43,6 +44,7 @@ void main() {
 
 	char msgToGraphics[1024];
 	Board board;
+	MiniMax mm(&board);
 
 	strcpy_s(msgToGraphics, Board::initalBoard.c_str());
 	p.sendMessageToGraphics(msgToGraphics);
@@ -59,19 +61,23 @@ void main() {
 
 		if (code >= 9) {
 			code -= 9;
-			msg = (char)(code + '0') + board.getStringBoard();
+			//msg = (char)(code + '0') + board.getStringBoard();
 		}
 		else {
 			msg = (code + '0');
+		}
+
+		if (!color) {
+			move m = mm.getBestMove(2, 1);
+			board.move(1, m.src, m.dst);
+			msg = (char)(code + '0') + board.getStringBoard();
 		}
 
 		strcpy_s(msgToGraphics, msg.c_str());
 		p.sendMessageToGraphics(msgToGraphics);
 
 		msgFromGraphics = p.getMessageFromGraphics();
-
-		if (code < 2)
-			color = !color;
+		
 	}
 
 	p.close();

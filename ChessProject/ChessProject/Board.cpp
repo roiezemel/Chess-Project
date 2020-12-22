@@ -38,11 +38,35 @@ Board::Board(std::string initialBoard) {
             board[j][i] = temp;
         }
     }
-    kings[0] = board[4][0];
+    kings[0] = board[4][0]; // Doesn't depend on string!!!! fix!!!!!!!!!!!!
     kings[1] = board[4][7];
 
     updateAllPossibleMoves(0);
     updateAllPossibleMoves(1);
+}
+
+Board::Board(Board& board) {
+    Piece* temp = 0;
+    int i = 0, j = 0;
+    char type = 0;
+    for (i = 0; i < SIZE; i++) {
+        for (j = 0; j < SIZE; j++) {
+            if (board.board[i][j]) {
+                type = board.board[i][j]->getType();
+                Checker pos = board.board[i][j]->getPosition();
+                type = board.board[i][j]->getColor() ? type : type - ('a' - 'A');
+                temp = Board::createPiece(type, pos.getX(), pos.getY(), this);
+                temp->setMoves(board.board[i][j]->getMoves());
+                sets[temp->getColor()].push_back(temp);
+                if (temp->getType() == 'k')
+                    kings[temp->getColor()] = temp;
+            }
+            else
+                temp = 0;
+            this->board[i][j] = temp;
+        }
+    }
+
 }
 
 /*
@@ -128,11 +152,7 @@ int Board::validMove(int color, Checker c1, Checker c2)
         
         code = isCheckBothSides(color);
         
-        board[c1.getX()][c1.getY()] = board[c2.getX()][c2.getY()];
-        board[c2.getX()][c2.getY()] = eaten;
-        board[c1.getX()][c1.getY()]->setPosition(c1);
-        if (eaten)
-            sets[!color].push_back(eaten);
+        moveBackPiece(color, c1, c2, eaten);
     }
     return code;
 }
@@ -237,6 +257,20 @@ int Board::specialMove(int color, Checker c1, Checker c2) {
 }
 
 /*
+    Cancel a move.
+    Input: a color, original checker c1 and 
+           move's destination checker c2, pointer to eaten piece.
+    Output: none.
+*/
+void Board::moveBackPiece(int color, Checker c1, Checker c2, Piece* eaten) {
+    board[c1.getX()][c1.getY()] = board[c2.getX()][c2.getY()];
+    board[c2.getX()][c2.getY()] = eaten;
+    board[c1.getX()][c1.getY()]->setPosition(c1);
+    if (eaten)
+        sets[!color].push_back(eaten);
+}
+
+/*
     Move piece from one checker to another.
     Input: piece's color, source and destination checkers.
     Output: pointer to eaten piece, 0 if no piece was eaten.
@@ -250,7 +284,26 @@ Piece* Board::movePiece(int color, Checker c1, Checker c2) {
         sets[!color].erase(std::remove(sets[!color].begin(), sets[!color].end(), eaten), sets[!color].end());
 
     board[c2.getX()][c2.getY()]->setPosition(c2);
+    isAllMovesUpdated[0] = false;
+    isAllMovesUpdated[1] = false;
     return eaten;
+}
+
+/*
+    Check if a move causes an invalid check.
+    Input: color, src and destination checkers.
+    Output: true if the move causes an invalid check, false otherwise.
+*/
+bool Board::isCausingCheck(int color, Checker c1, Checker c2) {
+    bool result = false;
+    Piece* eaten = movePiece(color, c1, c2);
+    std::unordered_map <Piece*, std::unordered_set<Checker>>* prevMoves = allPossibleMoves[!color];
+    allPossibleMoves[!color] = getAllPossibleMoves(!color);
+    result = isCheck(color);
+    moveBackPiece(color, c1, c2, eaten);
+    delete(allPossibleMoves[!color]);
+    allPossibleMoves[!color] = prevMoves;
+    return result;
 }
 
 /*
@@ -259,10 +312,13 @@ Piece* Board::movePiece(int color, Checker c1, Checker c2) {
     Output: none.
 */
 void Board::updateAllPossibleMoves(int color) {
-    if (allPossibleMoves[color])
-        delete(allPossibleMoves[color]);
+    if (!isAllMovesUpdated[color]) {
+        if (allPossibleMoves[color])
+            delete(allPossibleMoves[color]);
 
-    allPossibleMoves[color] = getAllPossibleMoves(color);
+        allPossibleMoves[color] = getAllPossibleMoves(color);
+        isAllMovesUpdated[color] = true;
+    }
 }
 
 /*
