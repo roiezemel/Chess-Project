@@ -14,7 +14,7 @@ class MiniMax
 public:
 	MiniMax(Board* board);
 	~MiniMax();
-	move getBestMove(int depth, int color);
+	move getBestMove(int depth, int color, int threshold);
 
 private:
 	Board* board;
@@ -34,9 +34,9 @@ private:
 	static int knight;
 	static int pawn;
 
-	int minMax(int depth, Board* board, bool isPlayerColor, int color);
+	int minMax(int depth, Board* board, bool isPlayerColor, int color, int threshold);
 	int eval(Board* board, int color) const;
-	std::vector<move> getAllMoves(Board* board, int color);
+	std::vector<move> getAllMoves(Board* board, int currentColor, int threshold, int color);
 
 };
 

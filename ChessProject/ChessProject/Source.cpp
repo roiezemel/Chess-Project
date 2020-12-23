@@ -33,7 +33,7 @@ void main() {
 
 		if (ans == "0") {
 			cout << "trying connect again.." << endl;
-			Sleep(5000);
+			Sleep(100);
 			isConnect = p.connect();
 		}
 		else {
@@ -72,7 +72,7 @@ void main() {
 		p.sendMessageToGraphics(msgToGraphics);
 
 		if (code < 2) {
-			move m = mm.getBestMove(2, 1);
+			move m = mm.getBestMove(4, 1, 3);
 			code = board.move(1, m.src, m.dst);
 			msg = createGuiMessage(m, code);
 			strcpy_s(msgToGraphics, msg.c_str());

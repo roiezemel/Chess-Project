@@ -28,18 +28,17 @@ public:
 	std::vector<Piece*> sets[2];
 	bool isCausingCheck(int color, Checker c1, Checker c2);
 	void updateAllPossibleMoves(int color);
-
+	bool isCheck(int color);
+	void moveBackPiece(int color, Checker c1, Checker c2, Piece* eaten);
 private:
 	
 	Piece* kings[2];
 	int validMove(int color, Checker c1, Checker c2);
-	bool isCheck(int color);
 	static Piece* createPiece(char type, int i, int j, Board* board);
 	int isCheckBothSides(int color);
 	int specialMove(int color, Checker c1, Checker c2);
 	bool castling = false;
 	bool isAllMovesUpdated[2] = {false, false};
-	void moveBackPiece(int color, Checker c1, Checker c2, Piece* eaten);
 
 };
 
