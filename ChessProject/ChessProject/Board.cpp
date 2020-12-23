@@ -283,7 +283,7 @@ Piece* Board::movePiece(int color, Checker c1, Checker c2) {
 
     if (eaten)
         sets[!color].erase(std::remove(sets[!color].begin(), sets[!color].end(), eaten), sets[!color].end());
-    std::cout << c2.getX() << " " <<  c2.getY() << std::endl;
+
     board[c2.getX()][c2.getY()]->setPosition(c2);
     isAllMovesUpdated[0] = false;
     isAllMovesUpdated[1] = false;

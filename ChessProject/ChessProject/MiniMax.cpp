@@ -124,7 +124,7 @@ int MiniMax::minMax(int depth, Board* board, bool isPlayerColor, int color, int 
 std::vector<move> MiniMax::getAllMoves(Board* board, int currentColor, int threshold, int color) {
     std::vector<move> allResult;
     std::vector<move> bestResult;
-    int v = currentColor == color ? -10000000 : 10000000;
+    int v = currentColor == color ? -1000000000 : 1000000000;
     int i = 0;
     board->updateAllPossibleMoves(currentColor);
     for (auto& p : *(board->allPossibleMoves[currentColor])) {
@@ -138,14 +138,13 @@ std::vector<move> MiniMax::getAllMoves(Board* board, int currentColor, int thres
             }
         }
     }
-    for (i = 0; i < threshold; i++) {
+    int size = allResult.size() > threshold ? threshold : allResult.size();
+    for (i = 0; i < size; i++) {
         move bestMove;
         int index = 0;
         bestMove.eval = v;
-        for (int j = 0; j < allResult.size(); j++)
-        {
-            if (!i)
-            {
+        for (int j = 0; j < allResult.size(); j++) {
+            if (!i) {
                 std::unordered_map <Piece*, std::unordered_set<Checker>>*
                 prevWhiteMoves = board->allPossibleMoves[0], * prevBlackMoves = board->allPossibleMoves[1];
                 Piece* eaten = board->movePiece(currentColor, allResult[j].src, allResult[j].dst);
@@ -153,8 +152,8 @@ std::vector<move> MiniMax::getAllMoves(Board* board, int currentColor, int thres
                 board->moveBackPiece(currentColor, allResult[j].src, allResult[j].dst, eaten);
                 board->allPossibleMoves[0] = prevWhiteMoves, board->allPossibleMoves[1] = prevBlackMoves;
             }
-            if ((color == currentColor && allResult[j].eval > bestMove.eval) ||  (color != currentColor && allResult[j].eval < bestMove.eval))
-            {
+
+            if ((color == currentColor && allResult[j].eval > bestMove.eval) ||  (color != currentColor && allResult[j].eval < bestMove.eval)) {
                 bestMove = allResult[j];
                 index = j;
             }
