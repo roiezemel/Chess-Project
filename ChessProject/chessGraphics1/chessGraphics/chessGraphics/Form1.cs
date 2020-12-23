@@ -291,7 +291,7 @@ namespace chessGraphics
                     {
                         isGameOver = true;
                     }
-                    else if (res.ToLower().StartsWith("valid"))
+                    if (res.ToLower().StartsWith("valid") || isGameOver)
                     {
                         isCurPlWhite = !isCurPlWhite;
                         lblCurrentPlayer.Text = isCurPlWhite ? "White" : "Black";
