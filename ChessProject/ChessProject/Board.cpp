@@ -112,9 +112,10 @@ int Board::move(int color, Checker c1, Checker c2) {
     
     board[c2.getX()][c2.getY()]->setMoves(board[c2.getX()][c2.getY()]->getMoves() + 1);
     
-    if (eaten)
+    if (eaten) {
         delete(eaten);
-
+        eaten = 0;
+    }
     updateAllPossibleMoves(!color);
 
     if (code && isMate(!color))
@@ -356,8 +357,9 @@ std::unordered_map<Piece*, std::unordered_set<Checker>>* Board::getAllPossibleMo
     std::unordered_map <Piece*, std::unordered_set<Checker>>* result = 
         new std::unordered_map <Piece*, std::unordered_set<Checker>>;
 
-    for (Piece* piece : sets[color])
-        result->insert({piece, piece->getAllPossibleMoves()});
+    for (Piece* piece : sets[color]) {
+        result->insert({ piece, piece->getAllPossibleMoves() });
+    }
 
     return result;
 }

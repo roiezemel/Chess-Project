@@ -96,7 +96,9 @@ int MiniMax::minMax(int depth, Board* board, bool isPlayerColor, int color) {
     minMaxMove.eval = isPlayerColor ? -100000000000 : 100000000000;
     for (move move : getAllMoves(board, currentColor)) {
         Board* newBoard = new Board(*board);
-        newBoard->movePiece(currentColor, move.src, move.dst);
+        Piece* eaten = newBoard->movePiece(currentColor, move.src, move.dst);
+        if (eaten)
+            delete(eaten);
         int value = minMax(depth - 1, newBoard, !isPlayerColor, color);
         delete(newBoard);
         if ((isPlayerColor && value > minMaxMove.eval) || (!isPlayerColor && value < minMaxMove.eval)) {
