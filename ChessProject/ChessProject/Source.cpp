@@ -16,9 +16,9 @@ using std::endl;
 using std::string;
 
 Checker getChecker(string msg, int pos);
-string createGuiMessage(move m, int code);
+string createGuiMessage(Move m, int code);
 
-void main() {
+int main() {
 
 	srand(time_t(NULL));
 
@@ -38,7 +38,7 @@ void main() {
 		}
 		else {
 			p.close();
-			return;
+			return 0;
 		}
 	}
 	
@@ -58,7 +58,9 @@ void main() {
 		Checker ch1 = getChecker(msgFromGraphics, 0);
 		Checker ch2 = getChecker(msgFromGraphics, 1);
 
-		code = board.move(color, ch1, ch2);
+		Move move(ch1, ch2);
+
+		code = board.move(color, move);
 
 		if (code >= 9) {
 			code -= 9;
@@ -72,8 +74,8 @@ void main() {
 		p.sendMessageToGraphics(msgToGraphics);
 
 		if (code < 2) {
-			move m = mm.getBestMove(4, 1, 3);
-			code = board.move(1, m.src, m.dst);
+			Move m = mm.getBestMove(2, 1);
+			code = board.move(1, m);
 			msg = createGuiMessage(m, code);
 			strcpy_s(msgToGraphics, msg.c_str());
 			p.sendMessageToGraphics(msgToGraphics);
@@ -85,6 +87,7 @@ void main() {
 
 	p.close();
 	
+	return 0;
 }
 
 /*
@@ -99,13 +102,13 @@ Checker getChecker(string msg, int pos) {
 	return Checker(x, y);
 }
 
-string createGuiMessage(move m, int code) {
+string createGuiMessage(Move m, int code) {
 	string result;
 	result += code + '0';
-	result += m.src.getX() + '0';
-	result += 7 - m.src.getY() + '0';
-	result += m.dst.getX() + '0';
-	result += 7 - m.dst.getY() + '0';
+	result += m.getSrc().getX() + '0';
+	result += 7 - m.getSrc().getY() + '0';
+	result += m.getDst().getX() + '0';
+	result += 7 - m.getDst().getY() + '0';
 	return result;
 }
 

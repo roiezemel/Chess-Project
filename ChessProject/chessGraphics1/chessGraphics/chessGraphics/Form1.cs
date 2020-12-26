@@ -323,7 +323,12 @@ namespace chessGraphics
                      this.Refresh();
 
                      if (code < 2) {
+                         this.SuspendLayout();
+
                          string msg = enginePipe.getEngineMessage();
+
+                         this.ResumeLayout(false);
+
                          int x1 = msg[1] - '0';
                          int y1 = msg[2] - '0';
                          int x2 = msg[3] - '0';

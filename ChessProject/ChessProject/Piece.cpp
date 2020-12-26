@@ -63,3 +63,11 @@ void Piece::setMoves(int moves) {
 int Piece::getMoves() {
 	return moves;
 }
+
+void Piece::addMoveToSet(Checker c, std::unordered_set<Move>* set) {
+	if (_board->kings[!getColor()]->getPosition() == c)
+		_board->isInCheck[!getColor()] == this;
+
+	Move move(getPosition(), c);
+	set->insert(move);
+}

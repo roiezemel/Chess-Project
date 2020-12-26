@@ -13,6 +13,9 @@ int MiniMax::rook = 500;
 int MiniMax::bishop = 300;
 int MiniMax::knight = 300;
 int MiniMax::pawn = 100;
+int MiniMax::allMovesCount = 0;
+int MiniMax::skipped = 0;
+int MiniMax::recursion = 0;
 
 
 /*
@@ -26,8 +29,11 @@ MiniMax::MiniMax(Board* board) {
 */
 MiniMax::~MiniMax() {
 }
-move MiniMax::getBestMove(int depth, int color, int threshold) {
-    minMax(depth, board, true, color, threshold);
+
+Move MiniMax::getBestMove(int depth, int color) {
+    minMax(depth, board, true, color, -1000000, 1000000);
+    std::cout << "Total Moves: " << allMovesCount << ", Skipped: " << skipped << ", Not Skipped: " << allMovesCount - skipped <<  std::endl;
+    std::cout << "Recursions: " << recursion << std::endl;
     return this->selectedMove;
 }
 /*
@@ -37,12 +43,13 @@ output: the value of the situation
 */
 int MiniMax::eval(Board* board, int color) const {
     int i = 0, j = 0, valCol = 0, x = 0, y = 0, value = 0;
-    board->allPossibleMoves[0] = board->getAllPossibleMoves(0);
-    board->allPossibleMoves[1] = board->getAllPossibleMoves(1);
+    
+    board->updateAllPossibleMoves(0, true);
+    board->updateAllPossibleMoves(1, true);
     
     for (i = 0; i < 2; i++) {
         valCol = (i * -2 + 1) * (color * -2 + 1);
-        if (board->isCheck(i) && board->isMate(i))
+        if (board->isCheck(i, lastMove) && board->isMate(i))
         {
             return valCol * -1000000;
         }
@@ -94,88 +101,64 @@ int MiniMax::eval(Board* board, int color) const {
 /*
 מחכה לסוף
 */
-int MiniMax::minMax(int depth, Board* board, bool isPlayerColor, int color, int threshold) {
+int MiniMax::minMax(int depth, Board* board, bool isPlayerColor, int color, int alpha, int beta) {
     
+    recursion++;
+
     if (!depth) 
         return eval(board, color);
+
     int currentColor = isPlayerColor ? color : !color;
-    std::vector<move> allMoves = getAllMoves(board, currentColor, threshold, color);
-    move minMaxMove;
-    minMaxMove.eval = isPlayerColor ? -100000000000 : 100000000000;
-    for (move move : allMoves) {
+    int value;
+
+    std::vector<Move> allMoves = getAllMoves(board, currentColor);
+    int size = allMoves.size();
+    allMovesCount += size;
+    int count = 0;
+    Move minMaxMove;
+    minMaxMove.setEval(isPlayerColor ? alpha : beta);
+    for (Move move : allMoves) {
         Board* newBoard = new Board(*board);
-        Piece* eaten = newBoard->movePiece(currentColor, move.src, move.dst);
+        Piece* eaten = newBoard->makeMove(currentColor, move);
+        lastMove = move;
 
         if (eaten)
             delete(eaten);
-        int value = minMax(depth - 1, newBoard, !isPlayerColor, color, threshold);
+
+        if (isPlayerColor)
+            value = minMax(depth - 1, newBoard, !isPlayerColor, color, minMaxMove.getEval(), beta);
+        
+        else
+            value = minMax(depth - 1, newBoard, !isPlayerColor, color, alpha, minMaxMove.getEval());
+
+        count++;
+
         delete(newBoard);
-        if ((isPlayerColor && value > minMaxMove.eval) || (!isPlayerColor && value < minMaxMove.eval)) {
+        if ((!isPlayerColor && value <= alpha) || (isPlayerColor && value >= beta)) {
+            skipped += size - count;
+            return isPlayerColor ? beta : alpha;
+        }
+
+        if ((isPlayerColor && value > minMaxMove.getEval()) || (!isPlayerColor && value < minMaxMove.getEval())) {
             minMaxMove = move;
-            minMaxMove.eval = value;
+            minMaxMove.setEval(value);
         }
     }
 
     selectedMove = minMaxMove;
 
-    return selectedMove.eval;
+    return selectedMove.getEval();
 }
 
-std::vector<move> MiniMax::getAllMoves(Board* board, int currentColor, int threshold, int color) {
-    std::vector<move> allResult;
-    std::vector<move> bestResult;
-    int v = currentColor == color ? -1000000000 : 1000000000;
-    int i = 0;
-    board->updateAllPossibleMoves(currentColor);
-    for (auto& p : *(board->allPossibleMoves[currentColor])) {
-        Checker src = p.first->getPosition();
-        for (Checker dst : p.second) {
-            if (!board->isCausingCheck(currentColor, src, dst)) {
-
-                move m(src, dst);
-
-                allResult.push_back(m);
-            }
-        }
+std::vector<Move> MiniMax::getAllMoves(Board* board, int currentColor) {
+    std::vector<Move> result;
+    board->updateAllPossibleMoves(currentColor, true);
+    std::cout << board->allPossibleMoves[currentColor]->size() << std::endl;
+    for (const Move& move : *(board->allPossibleMoves[currentColor])) {
+        Piece* eaten = board->makeMove(currentColor, move);
+        if (!board->isCheck(currentColor, move))
+            result.push_back(move);
+        board->makeBackMove(currentColor, move, eaten);
     }
-    int size = allResult.size() > threshold ? threshold : allResult.size();
-    for (i = 0; i < size; i++) {
-        move bestMove;
-        int index = 0;
-        bestMove.eval = v;
-        for (int j = 0; j < allResult.size(); j++) {
-            if (!i) {
-                std::unordered_map <Piece*, std::unordered_set<Checker>>*
-                prevWhiteMoves = board->allPossibleMoves[0], * prevBlackMoves = board->allPossibleMoves[1];
-                Piece* eaten = board->movePiece(currentColor, allResult[j].src, allResult[j].dst);
-                allResult[j].eval = eval(board, color);
-                board->moveBackPiece(currentColor, allResult[j].src, allResult[j].dst, eaten);
-                board->allPossibleMoves[0] = prevWhiteMoves, board->allPossibleMoves[1] = prevBlackMoves;
-            }
-
-            if ((color == currentColor && allResult[j].eval > bestMove.eval) ||  (color != currentColor && allResult[j].eval < bestMove.eval)) {
-                bestMove = allResult[j];
-                index = j;
-            }
-        }
-        bestResult.push_back(bestMove);
-        allResult[index].eval = v;
-    }
-
-    return bestResult;
-}
-
-move::move() : src(0, 0), dst(0, 0), eval(0) {}
-
-move::move(Checker src, Checker dst) : src(src), dst(dst), eval(0) {}
-
-/*
-operator = of move
-*/
-move& move::operator=(move& other)
-{
-    this->dst = other.dst;
-    this->src = other.src;
-    this->eval = other.eval;
-    return *this;
+    return result;
 }

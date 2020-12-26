@@ -19,9 +19,9 @@ the function find all the posible moves of the knight
 input: none
 output: set of checkers
 */
-std::unordered_set<Checker> Knight::getAllPossibleMoves()
+std::unordered_set<Move> Knight::getAllPossibleMoves()
 {
-	std::unordered_set<Checker> set;
+	std::unordered_set<Move> set;
 	int x = _checker.getX();
 	int y = _checker.getY();
 	int i = x + 2;
@@ -30,11 +30,11 @@ std::unordered_set<Checker> Knight::getAllPossibleMoves()
 	{
 		if (!_board->board[i][j])
 		{
-			set.insert(Checker(i, j));
+			addMoveToSet(Checker(i, j), &set);
 		}
 		else if (_board->board[i][j]->getColor() != _color)
 		{
-			set.insert(Checker(i, j));
+			addMoveToSet(Checker(i, j), &set);
 		}
 	}
 	i = x + 2;
@@ -43,11 +43,11 @@ std::unordered_set<Checker> Knight::getAllPossibleMoves()
 	{
 		if (!_board->board[i][j])
 		{
-			set.insert(Checker(i, j));
+			addMoveToSet(Checker(i, j), &set);
 		}
 		else if (_board->board[i][j]->getColor() != _color)
 		{
-			set.insert(Checker(i, j));
+			addMoveToSet(Checker(i, j), &set);
 		}
 	}
 	i = x + 1;
@@ -56,11 +56,11 @@ std::unordered_set<Checker> Knight::getAllPossibleMoves()
 	{
 		if (!_board->board[i][j])
 		{
-			set.insert(Checker(i, j));
+			addMoveToSet(Checker(i, j), &set);
 		}
 		else if (_board->board[i][j]->getColor() != _color)
 		{
-			set.insert(Checker(i, j));
+			addMoveToSet(Checker(i, j), &set);
 		}
 	}
 	i = x + 1;
@@ -69,11 +69,11 @@ std::unordered_set<Checker> Knight::getAllPossibleMoves()
 	{
 		if (!_board->board[i][j])
 		{
-			set.insert(Checker(i, j));
+			addMoveToSet(Checker(i, j), &set);
 		}
 		else if (_board->board[i][j]->getColor() != _color)
 		{
-			set.insert(Checker(i, j));
+			addMoveToSet(Checker(i, j), &set);
 		}
 	}
 	i = x - 1;
@@ -82,11 +82,11 @@ std::unordered_set<Checker> Knight::getAllPossibleMoves()
 	{
 		if (!_board->board[i][j])
 		{
-			set.insert(Checker(i, j));
+			addMoveToSet(Checker(i, j), &set);
 		}
 		else if (_board->board[i][j]->getColor() != _color)
 		{
-			set.insert(Checker(i, j));
+			addMoveToSet(Checker(i, j), &set);
 		}
 	}
 	i = x - 1;
@@ -95,11 +95,11 @@ std::unordered_set<Checker> Knight::getAllPossibleMoves()
 	{
 		if (!_board->board[i][j])
 		{
-			set.insert(Checker(i, j));
+			addMoveToSet(Checker(i, j), &set);
 		}
 		else if (_board->board[i][j]->getColor() != _color)
 		{
-			set.insert(Checker(i, j));
+			addMoveToSet(Checker(i, j), &set);
 		}
 	}
 	i = x - 2;
@@ -108,11 +108,11 @@ std::unordered_set<Checker> Knight::getAllPossibleMoves()
 	{
 		if (!_board->board[i][j])
 		{
-			set.insert(Checker(i, j));
+			addMoveToSet(Checker(i, j), &set);
 		}
 		else if (_board->board[i][j]->getColor() != _color)
 		{
-			set.insert(Checker(i, j));
+			addMoveToSet(Checker(i, j), &set);
 		}
 	}
 	i = x - 2;
@@ -121,12 +121,26 @@ std::unordered_set<Checker> Knight::getAllPossibleMoves()
 	{
 		if (!_board->board[i][j])
 		{
-			set.insert(Checker(i, j));
+			addMoveToSet(Checker(i, j), &set);
 		}
 		else if (_board->board[i][j]->getColor() != _color)
 		{
-			set.insert(Checker(i, j));
+			addMoveToSet(Checker(i, j), &set);
 		}
 	}
 	return set;
+}
+
+/*
+	check if the knight is threatening the other color's king.
+*/
+bool Knight::isCausingCheck() {
+	Checker kingPos = _board->kings[!getColor()]->getPosition();
+	int dx = kingPos.getX() - getPosition().getX();
+	int dy = kingPos.getY() - getPosition().getY();
+
+	dx = dx < 0 ? -dx : dx;
+	dy = dy < 0 ? -dy : dy; // absolute values
+
+	return (dx == 2 && dy == 1) || (dx == 1 && dy == 2);
 }

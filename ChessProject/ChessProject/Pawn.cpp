@@ -20,36 +20,53 @@ Pawn::~Pawn() {}
     Input: none.
     Output: set with the pawn's all possible moves.
 */
-std::unordered_set<Checker> Pawn::getAllPossibleMoves() {
-    std::unordered_set<Checker> result;
+std::unordered_set<Move> Pawn::getAllPossibleMoves() {
+    std::unordered_set<Move> result;
 
     int op = _color ? -1 : 1;
     int yOp = _checker.getY() + op;
 
     if (_checker.getY() == (_color ? 6 : 1) && !_board->board[_checker.getX()][_checker.getY() + op * 2]
         && !_board->board[_checker.getX()][_checker.getY() + op]) {
-        result.insert(Checker(_checker.getX(), _checker.getY() + op * 2));
+        addMoveToSet(Checker(_checker.getX(), _checker.getY() + op * 2), &result);
     }
 
     if (yOp >= 0 && yOp < BOARD_SIZE) {
         if (!_board->board[_checker.getX()][yOp]) {
             Checker c(_checker.getX(), yOp);
-            result.insert(c);
+            addMoveToSet(c, &result);
         }
 
         if (_checker.getX() && _board->board[_checker.getX() - 1][yOp] 
             && _board->board[_checker.getX() - 1][yOp]->getColor() != this->getColor()) {
             Checker c(_checker.getX() - 1, yOp);
-            result.insert(c);
+            addMoveToSet(c, &result);
         }
 
         if (_checker.getX() + 1 < BOARD_SIZE && _board->board[_checker.getX() + 1][yOp] 
             && _board->board[_checker.getX() + 1][yOp]->getColor() != this->getColor()) {
             Checker c(_checker.getX() + 1, yOp);
-            result.insert(c);
+            addMoveToSet(c, &result);
         }
     }
 
     return result;
+}
+
+/*
+    check if the pawn is threatening the other color's king.
+*/
+bool Pawn::isCausingCheck() {
+    Checker kingPos = _board->kings[!getColor()]->getPosition();
+    int dx = kingPos.getX() - getPosition().getX();
+    int dy = kingPos.getY() - getPosition().getY();
+
+    if ((!getColor() && dy <= 0) || (getColor() && dy >= 0))
+        return false;
+
+    dx = dx < 0 ? -dx : dx;
+    dy = dy < 0 ? -dy : dy; // absolute values
+
+    return dx == 1 && dy == 1;
 }
 

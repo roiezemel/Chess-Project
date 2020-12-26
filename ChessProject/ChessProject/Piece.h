@@ -3,6 +3,7 @@
 #include <iostream>
 #include "Checker.h"
 #include <unordered_set>
+#include "Move.h"
 
 class Board;
 class Piece
@@ -13,11 +14,13 @@ public:
 	int getColor();
 	//virtual bool isValidMove(Checker c1, Checker c2) = 0;
 	virtual char getType();
-	virtual std::unordered_set <Checker> getAllPossibleMoves() = 0;
+	virtual std::unordered_set <Move> getAllPossibleMoves() = 0;
+	virtual bool isCausingCheck() = 0;
 	Checker getPosition();
 	void setPosition(Checker c);
 	void setMoves(int moves);
 	int getMoves();
+	void addMoveToSet(Checker c, std::unordered_set<Move>* set);
 
 protected:
 	Board* _board;

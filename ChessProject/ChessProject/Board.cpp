@@ -41,8 +41,8 @@ Board::Board(std::string initialBoard) {
     kings[0] = board[4][0]; // Doesn't depend on string!!!! fix!!!!!!!!!!!!
     kings[1] = board[4][7];
 
-    updateAllPossibleMoves(0);
-    updateAllPossibleMoves(1);
+    updateAllPossibleMoves(0, false);
+    updateAllPossibleMoves(1, false);
 }
 
 Board::Board(Board& board) {
@@ -93,14 +93,14 @@ Board::~Board() {
            and source and destination checkers.
     Output: none.
 */
-int Board::move(int color, Checker c1, Checker c2) {
+int Board::move(int color, Move move) {
 
 
 
-    int code = validMove(color, c1, c2);
+    int code = validateMove(color, move);
 
     if (code == 6) {
-        int castlingCode = specialMove(color, c1, c2);
+        int castlingCode = specialMove(color, move);
         if (castlingCode >= 0)
             return castlingCode;
     }
@@ -108,15 +108,16 @@ int Board::move(int color, Checker c1, Checker c2) {
     if (code > 1)
         return code;
     
-    Piece* eaten = movePiece(color, c1, c2);
+    Piece* eaten = makeMove(color, move);
     
-    board[c2.getX()][c2.getY()]->setMoves(board[c2.getX()][c2.getY()]->getMoves() + 1);
+    board[move.getDst().getX()][move.getDst().getY()]->setMoves(board[move.getDst().getX()][move.getDst().getY()]->getMoves() + 1);
     
     if (eaten) {
         delete(eaten);
         eaten = 0;
     }
-    updateAllPossibleMoves(!color);
+
+    updateAllPossibleMoves(!color, true);
 
     if (code && isMate(!color))
         return 8;
@@ -128,9 +129,11 @@ the function check if move is valid
 input: the color and the checkers of the move
 output: the code of the movment
 */
-int Board::validMove(int color, Checker c1, Checker c2)
-{
+int Board::validateMove(int color, Move move) {
 
+
+    Checker c1 = move.getSrc();
+    Checker c2 = move.getDst();
     int code = 0;
     if (!board[c1.getX()][c1.getY()] || board[c1.getX()][c1.getY()]->getColor() != color) {
         code = 2;
@@ -144,61 +147,50 @@ int Board::validMove(int color, Checker c1, Checker c2)
         code = 7;
     }
 
-    else if (!((allPossibleMoves[color])->at(board[c1.getX()][c1.getY()]).count(c2))) {
+    else if (!(*(allPossibleMoves[color])).count(move)) {
         code = 6;
     }
     else {
 
-        Piece* eaten = movePiece(color, c1, c2);
+        Piece* eaten = makeMove(color, move);
         
-        code = isCheckBothSides(color);
+        if (isCheck(color, move))
+            code = 4;
+        else if (isCheck(!color, move))
+            code = 1;
         
-        moveBackPiece(color, c1, c2, eaten);
+        makeBackMove(color, move, eaten);
     }
     return code;
 }
 
 /*
-    Checks if one of the colors' king is threatened.
-    Input: color whose king should be checked.
+    Checks if a move caused check for one of the colors.
+    Input: color whose king should be checked, and a move.
     Output: true if the color's king is threatened by some other piece, false otherwise.
 */
-bool Board::isCheck(int color) { // colors: 0 = white, 1 = black
-    for (Piece* piece : sets[!color]) {
-        if ((*allPossibleMoves[!color]).at(piece).count(kings[color]->getPosition())) {
-            return true;
-        }
+bool Board::isCheck(int color, Move move) { // colors: 0 = white, 1 = black
+    
+    Checker src = move.getSrc();
+    Checker dst = move.getDst();
+
+    if (board[dst.getX()][dst.getY()]->getType() == 'k') { // if a king was moved, check all moves
+        for (Piece* p : sets[!color])
+            if (p->isCausingCheck())
+                return true;
+        return false;
     }
+    
+    if (isInCheck[color] && isInCheck[color]->isCausingCheck()) // if was already in check, check if still
+        return true;
+
+    if (leftAndMadeCheck(src, color)) // check if the king is threatened from the src checker
+        return true;
+
+    if (board[dst.getX()][dst.getY()]->getColor() != color) // if the moved piece is the king's opponent, check if it causes check
+        return board[dst.getX()][dst.getY()]->isCausingCheck();
+
     return false;
-}
-
-/*
-    Check if one of the colors' king is in check and return the corresponding code.
-    Input: color.
-    Output: code.s
-*/
-int Board::isCheckBothSides(int color) {
-    int code = 0;
-    std::unordered_map <Piece*, std::unordered_set<Checker>>*
-        prevWhiteMoves = allPossibleMoves[0], * prevBlackMoves = allPossibleMoves[1];
-
-    allPossibleMoves[!color] = getAllPossibleMoves(!color);
-    if (isCheck(color)) // If the current color is now threatened, the move is not valid.
-        code = 4;
-
-    else {
-        allPossibleMoves[color] = getAllPossibleMoves(color);
-        if (isCheck(!color))
-            code = 1;
-        delete(allPossibleMoves[color]);
-    }
-
-    delete(allPossibleMoves[!color]);
-
-    allPossibleMoves[0] = prevWhiteMoves;
-    allPossibleMoves[1] = prevBlackMoves;
-
-    return code;
 }
 
 /*
@@ -206,7 +198,9 @@ int Board::isCheckBothSides(int color) {
     Input: color, source and destination checkers.
     Output: move code.
 */
-int Board::specialMove(int color, Checker c1, Checker c2) {
+int Board::specialMove(int color, Move move) {
+    Checker c1 = move.getSrc();
+    Checker c2 = move.getDst();
     Checker* rc1 = 0;
     Checker* rc2 = 0;
     int code = -1;
@@ -231,10 +225,15 @@ int Board::specialMove(int color, Checker c1, Checker c2) {
     }
 
     if (rc1) {
-        movePiece(color, c1, c2);
-        movePiece(color, *rc1, *rc2);
-        code = isCheckBothSides(color);
-        
+        makeMove(color, move);
+        Move m2(*rc1, *rc2);
+        makeMove(color, m2);
+
+        if (isCheck(color, move))
+            code = 4;
+        else if (isCheck(!color, move))
+            code = 1;
+
         if (code > 1) {
             board[rc1->getX()][rc1->getY()] = board[rc2->getX()][rc2->getY()];
             board[rc2->getX()][rc2->getY()] = 0;
@@ -245,7 +244,7 @@ int Board::specialMove(int color, Checker c1, Checker c2) {
             board[c1.getX()][c1.getY()]->setPosition(c1);
         }
         else {
-            updateAllPossibleMoves(!color);
+            updateAllPossibleMoves(!color, true);
 
             if (code && isMate(!color))
                 code = 8;
@@ -263,12 +262,39 @@ int Board::specialMove(int color, Checker c1, Checker c2) {
            move's destination checker c2, pointer to eaten piece.
     Output: none.
 */
-void Board::moveBackPiece(int color, Checker c1, Checker c2, Piece* eaten) {
-    board[c1.getX()][c1.getY()] = board[c2.getX()][c2.getY()];
-    board[c2.getX()][c2.getY()] = eaten;
-    board[c1.getX()][c1.getY()]->setPosition(c1);
+void Board::makeBackMove(int color, Move move, Piece* eaten) {
+    board[move.getSrc().getX()][move.getSrc().getY()] = board[move.getDst().getX()][move.getDst().getY()];
+    board[move.getDst().getX()][move.getDst().getY()] = eaten;
+    board[move.getSrc().getX()][move.getSrc().getY()]->setPosition(move.getSrc());
     if (eaten)
         sets[!color].push_back(eaten);
+}
+
+/*
+    Check a left checker caused a check.
+    Input: left checker (src of previous move) and a king color.
+    Output: true if the color's king is in check, false otherwise.
+*/
+bool Board::leftAndMadeCheck(Checker src, int kingColor) {
+    Checker kingPos = kings[kingColor]->getPosition();
+    int dx = src.getX() - kingPos.getX();
+    int dy = src.getY() - kingPos.getY();
+
+    int addi = dx ? (dx > 0 ? 1 : -1) : 0;
+    int addj = dy ? (dy > 0 ? 1 : -1) : 0;
+    int i = kingPos.getX();
+    int j = kingPos.getY();
+    char type = !dx || !dy ? 'r' : 'b';
+
+    while (i < SIZE && j < SIZE && i >= 0 && j >= 0) {
+        if (board[i][j])
+            return board[i][j]->getColor() != kingColor && (board[i][j]->getType() == type || board[i][j]->getType() == 'q');
+
+        i += addi;
+        j += addj;
+    }
+
+    return false;
 }
 
 /*
@@ -276,35 +302,16 @@ void Board::moveBackPiece(int color, Checker c1, Checker c2, Piece* eaten) {
     Input: piece's color, source and destination checkers.
     Output: pointer to eaten piece, 0 if no piece was eaten.
 */
-Piece* Board::movePiece(int color, Checker c1, Checker c2) {
-    Piece* eaten = board[c2.getX()][c2.getY()];
-    board[c2.getX()][c2.getY()] = board[c1.getX()][c1.getY()];
-    board[c1.getX()][c1.getY()] = 0;
+Piece* Board::makeMove(int color, Move move) {
+    Piece* eaten = board[move.getDst().getX()][move.getDst().getY()];
+    board[move.getDst().getX()][move.getDst().getY()] = board[move.getSrc().getX()][move.getSrc().getY()];
+    board[move.getSrc().getX()][move.getSrc().getY()] = 0;
 
     if (eaten)
         sets[!color].erase(std::remove(sets[!color].begin(), sets[!color].end(), eaten), sets[!color].end());
 
-    board[c2.getX()][c2.getY()]->setPosition(c2);
-    isAllMovesUpdated[0] = false;
-    isAllMovesUpdated[1] = false;
+    board[move.getDst().getX()][move.getDst().getY()]->setPosition(move.getDst());
     return eaten;
-}
-
-/*
-    Check if a move causes an invalid check.
-    Input: color, src and destination checkers.
-    Output: true if the move causes an invalid check, false otherwise.
-*/
-bool Board::isCausingCheck(int color, Checker c1, Checker c2) {
-    bool result = false;
-    Piece* eaten = movePiece(color, c1, c2);
-    std::unordered_map <Piece*, std::unordered_set<Checker>>* prevMoves = allPossibleMoves[!color];
-    allPossibleMoves[!color] = getAllPossibleMoves(!color);
-    result = isCheck(color);
-    moveBackPiece(color, c1, c2, eaten);
-    delete(allPossibleMoves[!color]);
-    allPossibleMoves[!color] = prevMoves;
-    return result;
 }
 
 /*
@@ -312,14 +319,12 @@ bool Board::isCausingCheck(int color, Checker c1, Checker c2) {
     Input: color.
     Output: none.
 */
-void Board::updateAllPossibleMoves(int color) {
-    if (!isAllMovesUpdated[color]) {
-        if (allPossibleMoves[color])
-            delete(allPossibleMoves[color]);
+void Board::updateAllPossibleMoves(int color, bool deletePrev) {
+    if (allPossibleMoves[color] && deletePrev)
+        delete(allPossibleMoves[color]);
 
-        allPossibleMoves[color] = getAllPossibleMoves(color);
-        isAllMovesUpdated[color] = true;
-    }
+    isInCheck[!color] = 0;
+    allPossibleMoves[color] = getAllPossibleMoves(color);
 }
 
 /*
@@ -353,13 +358,12 @@ std::string Board::getStringBoard() {
     Input: a color.
     Output: map with pieces as keys, and their possible moves sets as values.
 */
-std::unordered_map<Piece*, std::unordered_set<Checker>>* Board::getAllPossibleMoves(int color) {
-    std::unordered_map <Piece*, std::unordered_set<Checker>>* result = 
-        new std::unordered_map <Piece*, std::unordered_set<Checker>>;
+std::unordered_set<Move>* Board::getAllPossibleMoves(int color) {
+    std::unordered_set<Move>* result = new std::unordered_set<Move>;
 
-    for (Piece* piece : sets[color]) {
-        result->insert({ piece, piece->getAllPossibleMoves() });
-    }
+    for (auto* piece : sets[color])
+        for (auto& move : piece->getAllPossibleMoves())
+            result->insert(move);
 
     return result;
 }
@@ -378,24 +382,15 @@ bool Board::isMate(int color)
     for (i = 0; i < sets[color].size() && mate; i++)
     {
         temp = sets[color][i];
-        for (auto& che : (*(allPossibleMoves[color])).at(temp))
+        for (const Move& move : (*(allPossibleMoves[color])))
         {
-            if (validMove(color, temp->getPosition(), che) < 2)
+            if (validateMove(color, move) < 2)
             {
                 mate = false;
             }
         }
     } 
     return mate;
-}
-
-/*
-    Is castling.
-    Input: none.
-    Output: is castling.
-*/
-bool Board::isCastling() {
-    return castling;
 }
 
 /*

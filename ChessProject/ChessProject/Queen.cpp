@@ -3,7 +3,7 @@
 c'tor
 */
 Queen::Queen(Checker che, Board* board, int col, char type) :
-	Piece(che, board, col, type)
+	Runner(che, board, col, type)
 {
 }
 /*
@@ -17,13 +17,20 @@ the function find all the places the queen can go
 input: none
 output: set off checkers
 */
-std::unordered_set<Checker> Queen::getAllPossibleMoves()
+std::unordered_set<Move> Queen::getAllPossibleMoves()
 {
-	std::unordered_set<Checker> set1 = Bishop::getAllPossibleDiagonalMoves(_board, _checker);
-	std::unordered_set<Checker> set2 = Rook::getAllPossibleStraightMoves(_board, _checker);
-	for (auto& che : set1)
+	std::unordered_set<Move> set1 = getAllPossibleDiagonalMoves(_board, _checker);
+	std::unordered_set<Move> set2 = getAllPossibleStraightMoves(_board, _checker);
+	for (const Move& move : set1)
 	{
-		set2.insert(che);
+		set2.insert(move);
 	}
 	return set2;
+}
+
+/*
+	check if the queen is threatening the other color's king.
+*/
+bool Queen::isCausingCheck() {
+	return isCheckDiagonal() || isCheckStraight();
 }

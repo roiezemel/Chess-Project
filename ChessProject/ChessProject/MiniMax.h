@@ -1,24 +1,17 @@
 #pragma once
 #include "Board.h"
 
-typedef struct move {
-	move();
-	move(Checker src, Checker dst);
-	move& operator=(move& other);
-	Checker src;
-	Checker dst;
-	int eval;
-}move;
 class MiniMax
 {
 public:
 	MiniMax(Board* board);
 	~MiniMax();
-	move getBestMove(int depth, int color, int threshold);
+	Move getBestMove(int depth, int color);
 
 private:
 	Board* board;
-	move selectedMove;
+	Move selectedMove;
+	Move lastMove;
 
 	static int placeKing[SIZE][SIZE];
 	static int placeQueen[SIZE][SIZE];
@@ -33,10 +26,13 @@ private:
 	static int bishop;
 	static int knight;
 	static int pawn;
+	static int allMovesCount;
+	static int skipped;
+	static int recursion;
 
-	int minMax(int depth, Board* board, bool isPlayerColor, int color, int threshold);
+	int minMax(int depth, Board* board, bool isPlayerColor, int color, int alpha, int beta);
 	int eval(Board* board, int color) const;
-	std::vector<move> getAllMoves(Board* board, int currentColor, int threshold, int color);
+	std::vector<Move> getAllMoves(Board* board, int currentColor);
 
 };
 
