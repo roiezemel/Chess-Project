@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
-VisualStudioVersion = 16.0.30523.141
+VisualStudioVersion = 16.0.30621.155
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "chessGraphics", "chessGraphics.csproj", "{E78FEB68-FB29-42FD-B780-FFF1D04E7AAD}"
 EndProject
@@ -20,6 +20,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {BA097020-419B-4C91-9A29-C1D3642B20F8}
+		SolutionGuid = {4C136D61-9412-4B65-97C3-C02D93B7FF81}
 	EndGlobalSection
 EndGlobal
