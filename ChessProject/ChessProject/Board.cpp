@@ -301,6 +301,27 @@ bool Board::leftAndMadeCheck(Checker src, int kingColor) {
 }
 
 /*
+    promote
+*/
+void Board::promote(std::string msg, Checker pawn) {
+    char types[4] = {'R', 'N', 'B', 'Q'};
+    char type = types[msg[0] - '0'];
+    
+    Piece* pawnPiece = board[pawn.getX()][pawn.getY()];
+    board[pawn.getX()][pawn.getY()] = 0;
+
+    sets[pawnPiece->getColor()].erase(std::remove(sets[pawnPiece->getColor()].begin(), sets[pawnPiece->getColor()].end(), pawnPiece), sets[pawnPiece->getColor()].end());
+    
+    Piece* newPiece = createPiece(type, pawn.getX(), pawn.getY(), this);
+    sets[pawnPiece->getColor()].push_back(newPiece);
+    board[pawn.getX()][pawn.getY()] = newPiece;
+    delete(pawnPiece);
+
+    updateAllPossibleMoves(0, true);
+    updateAllPossibleMoves(1, true);
+}
+
+/*
     Move piece from one checker to another.
     Input: piece's color, source and destination checkers.
     Output: pointer to eaten piece, 0 if no piece was eaten.

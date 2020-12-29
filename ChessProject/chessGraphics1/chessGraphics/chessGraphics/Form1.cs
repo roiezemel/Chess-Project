@@ -21,6 +21,7 @@ namespace chessGraphics
 
         bool isCurPlWhite = true;
         bool isGameOver = false;
+        string promoteBoard = null;
 
         const int BOARD_SIZE = 8;
 
@@ -182,7 +183,13 @@ namespace chessGraphics
         void lastlbl_Click(object sender, EventArgs e)
         {
             
+            if (promoteBoard != null) {
+                lastlbl_Click_forPromotion(sender, e);
+                return;
+            }
+
             Button b = (Button)sender;
+
             if (srcSquare != null)
             {
                 // unselected
@@ -275,23 +282,17 @@ namespace chessGraphics
                         this.Close();
                         return;
                     }
-                     bool promot = false;
                     bool special = false;
                     String after = null;
 
                     if (m.Length > 1)
-                    {
+                     {
                          after = m.Substring(1);
                          m = m.Substring(0, 1);
-                         if (m[0] == 'p')
+                         if (m.Length > 10)
                          {
-                             promot = true;
+                             promoteBoard = after;
                              //bool isWhite = 0 != after[0] - '0';
-                             bool isWhite = true;
-                             string pawnPro = isWhite ? "##########################################################RNBQ##" : "##########################################################rnbq##";
-                             paintForPromotion(pawnPro);
-                             
-                             
                          }
                      }
                      int code = m[0] - '0';
@@ -321,7 +322,14 @@ namespace chessGraphics
                      this.Refresh();
 
 
-                     if (after != null && after.Length > 3)
+                     if (promoteBoard != null)
+                     {
+                         bool isWhite = true;
+                         string pawnPro = isWhite ? "##########################################################RNBQ##" : "##########################################################rnbq##";
+                         paintForPromotion(pawnPro);
+                         this.Refresh();
+                     }
+                     else if (after != null)
                      {
                          int x1 = after[0] - '0';
                          int y1 = after[1] - '0';
@@ -330,18 +338,10 @@ namespace chessGraphics
                          matBoard[y2, x2].BackgroundImage = matBoard[y1, x1].BackgroundImage;
                          matBoard[y1, x1].BackgroundImage = null;
                      }
-                     else if (after != null && after.Length != 0)
-                     {
-                         int x = after[0] - '0';
-                         int y = after[1] - '0';
-                     }
+              
 
                      this.Refresh();
-                     if (promot)
-                     {
-                         string boardAfterPromot = enginePipe.getEngineMessage();
 
-                     }
                      if (code < 2) {
                          this.SuspendLayout();
 
@@ -407,8 +407,6 @@ namespace chessGraphics
                 {
                     Button newBtn = matBoard[i, j];
                     newBtn.BackgroundImage = getImageBySign(board[z]);
-                    newBtn.Click += lastlbl_Click_forPromotion;
-
                     z++;
                 }
             }
@@ -423,20 +421,23 @@ namespace chessGraphics
         }
         void lastlbl_Click_forPromotion(object sender, EventArgs e)
         {
+            Button b = (Button)sender;
 
-            if (srcSquare != null)
-            {
-                // unselected
-               
-                matBoard[srcSquare.Row, srcSquare.Col].FlatAppearance.BorderColor = Color.Blue;
-            }
-            else
-            {
-                matBoard[dstSquare.Row, dstSquare.Col].FlatAppearance.BorderColor = Color.DarkGreen;
+            for (int j = 2; j <= 5; j++) {
+                if (matBoard[7, j] == b) {
 
-                Thread t = new Thread(playMove);
-                t.Start();
+                    Image im = matBoard[7, j].BackgroundImage;
+                    
+                    paintForPromotion(promoteBoard);
+                    
+                    matBoard[7, j].BackgroundImage = im;
+                    promoteBoard = null;
+                    enginePipe.sendEngineMove((j - 2) + "");
+
+                    return;
+                }
             }
+
         }
 
         

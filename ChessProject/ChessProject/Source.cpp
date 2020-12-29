@@ -18,6 +18,7 @@ using std::string;
 Checker getChecker(string msg, int pos);
 string createGuiMessage(Move m, int code);
 
+
 int main() {
 
 	srand(time_t(NULL));
@@ -53,6 +54,7 @@ int main() {
 	string msgFromGraphics = p.getMessageFromGraphics();
 
 	int color = 0, code = 0, castlingCode = -1;
+	bool promote = false;
 	std::string msg;
 	while (msgFromGraphics != "quit") {
 		Checker ch1 = getChecker(msgFromGraphics, 0);
@@ -66,12 +68,24 @@ int main() {
 			code -= 9;
 			//msg = (char)(code + '0') + board.getStringBoard();
 		}
+		else if (code < 2 && board.board[ch2.getX()][ch2.getY()]->getType() == 'p' && ch2.getY() == 7) {
+			msg = (code + '0') + "" + board.getStringBoard();
+			promote = true;
+		}
 		else {
 			msg = (code + '0');
 		}
 
 		strcpy_s(msgToGraphics, msg.c_str());
 		p.sendMessageToGraphics(msgToGraphics);
+
+		if (promote) {
+			
+			msgFromGraphics = p.getMessageFromGraphics();
+
+			board.promote(msgFromGraphics, ch2);
+			promote = false;
+		}
 
 		if (code < 2) {
 			Move m = mm.getBestMove(2, 1);

@@ -38,6 +38,7 @@ public:
 	bool isCheck(int color, Move move); // done
 	void makeBackMove(int color, Move move, Piece* eaten); // done
 	bool leftAndMadeCheck(Checker src, int kingColor); // done
+	void promote(std::string msg, Checker pawn);
 
 private:
 	
