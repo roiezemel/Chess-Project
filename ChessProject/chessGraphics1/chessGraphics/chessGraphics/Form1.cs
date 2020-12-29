@@ -126,7 +126,7 @@ namespace chessGraphics
             int currentHeight = btnBoard.Location.Y;
             
             bool isColBlack = true;
-            bool isRowBlack = true ;
+            bool isRowBlack = false ;
             
             this.SuspendLayout();
 
@@ -181,6 +181,7 @@ namespace chessGraphics
 
         void lastlbl_Click(object sender, EventArgs e)
         {
+            
             Button b = (Button)sender;
             if (srcSquare != null)
             {
@@ -267,7 +268,7 @@ namespace chessGraphics
 
                      // should get pipe from engine
                     string m = enginePipe.getEngineMessage();
-
+                        
                     if (!enginePipe.isConnected())
                     {
                         MessageBox.Show("Connection to engine has lost. Bye bye.");
@@ -278,10 +279,19 @@ namespace chessGraphics
                      bool special = false;
                      String after = null;
 
-                    if (m.Length > 1)
+                    if (m.Length > 1 || true)
                      {
                          after = m.Substring(1);
                          m = m.Substring(0, 1);
+                         if (m[0] == 'p' || true)
+                         {
+                             special = true;
+                             //bool isWhite = 0 != after[0] - '0';
+                             bool isWhite = true;
+                             string pawnPro = isWhite ? "##########################################################RNBQ##" : "##########################################################rnbq##";
+                             paintForPromotion(pawnPro);
+                             
+                         }
                      }
                      int code = m[0] - '0';
 
@@ -310,7 +320,7 @@ namespace chessGraphics
                      this.Refresh();
 
 
-                     if (after != null)
+                     if (after != null && after.Length > 3)
                      {
                          int x1 = after[0] - '0';
                          int y1 = after[1] - '0';
@@ -318,6 +328,11 @@ namespace chessGraphics
                          int y2 = after[3] - '0';
                          matBoard[y2, x2].BackgroundImage = matBoard[y1, x1].BackgroundImage;
                          matBoard[y1, x1].BackgroundImage = null;
+                     }
+                     else if (after != null && after.Length != 0)
+                     {
+                         int x = after[0] - '0';
+                         int y = after[1] - '0';
                      }
 
                      this.Refresh();
@@ -378,6 +393,21 @@ namespace chessGraphics
                 }
 
         }
+        void paintForPromotion(string board)
+        {
+            int i = 0, j = 0, z = 0;
+            for (i = 0; i < BOARD_SIZE; i ++)
+            {
+                for(j = 0; j < BOARD_SIZE; j++)
+                {
+                    Button newBtn = matBoard[i, j];
+                    newBtn.BackgroundImage = getImageBySign(board[z]);
+                    newBtn.Click += lastlbl_Click_forPromotion;
+
+                    z++;
+                }
+            }
+        }
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
@@ -386,5 +416,26 @@ namespace chessGraphics
             enginePipe.sendEngineMove("quit");
             enginePipe.close();
         }
+        void lastlbl_Click_forPromotion(object sender, EventArgs e)
+        {
+
+            if (srcSquare != null)
+            {
+                // unselected
+               
+                matBoard[srcSquare.Row, srcSquare.Col].FlatAppearance.BorderColor = Color.Blue;
+            }
+            else
+            {
+                matBoard[dstSquare.Row, dstSquare.Col].FlatAppearance.BorderColor = Color.DarkGreen;
+
+                Thread t = new Thread(playMove);
+                t.Start();
+            }
+        }
+
+        
+
     }
 }
+

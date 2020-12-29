@@ -153,7 +153,7 @@
             this.lblWaiting.AutoSize = true;
             this.lblWaiting.Font = new System.Drawing.Font("Arial Narrow", 36F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblWaiting.ForeColor = System.Drawing.Color.Red;
-            this.lblWaiting.Location = new System.Drawing.Point(221, 218);
+            this.lblWaiting.Location = new System.Drawing.Point(213, 226);
             this.lblWaiting.Name = "lblWaiting";
             this.lblWaiting.Size = new System.Drawing.Size(611, 57);
             this.lblWaiting.TabIndex = 9;
