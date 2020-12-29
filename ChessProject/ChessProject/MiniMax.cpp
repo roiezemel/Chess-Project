@@ -101,7 +101,9 @@ int MiniMax::eval(Board* board, int color) const {
 }
 
 /*
-מחכה לסוף
+find the best play for computer
+input: int board boll int int int 
+return: int
 */
 int MiniMax::minMax(int depth, Board* board, bool isPlayerColor, int color, int alpha, int beta) {
     
@@ -151,7 +153,11 @@ int MiniMax::minMax(int depth, Board* board, bool isPlayerColor, int color, int 
 
     return selectedMove.getEval();
 }
-
+/*
+find all the moves
+input: board
+output: set
+*/
 std::vector<Move> MiniMax::getAllMoves(Board* board, int currentColor) {
     std::vector<Move> result;
     board->updateAllPossibleMoves(currentColor, true);

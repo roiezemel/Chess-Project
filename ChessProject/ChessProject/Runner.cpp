@@ -170,7 +170,9 @@ std::unordered_set<Move> Runner::getAllPossibleStraightMoves(Board* _board, Chec
 	}
 	return set;
 }
-
+/*
+check if there a check on diagonal
+*/
 bool Runner::isCheckDiagonal() { 
 	Checker kingPos = _board->kings[!getColor()]->getPosition();
 	int dx = kingPos.getX() - getPosition().getX();
@@ -196,7 +198,9 @@ bool Runner::isCheckDiagonal() {
 
 	return false;
 }
-
+/*
+check if there check on strait
+*/
 bool Runner::isCheckStraight() {
 	Checker kingPos = _board->kings[!getColor()]->getPosition();
 	int dx = kingPos.getX() - getPosition().getX();

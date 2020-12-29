@@ -77,7 +77,7 @@
             this.btnBoard.BackColor = System.Drawing.Color.Black;
             this.btnBoard.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnBoard.BackgroundImage")));
             this.btnBoard.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btnBoard.FlatAppearance.BorderColor = System.Drawing.Color.Blue;
+            this.btnBoard.FlatAppearance.BorderColor = System.Drawing.Color.Black;
             this.btnBoard.FlatAppearance.BorderSize = 3;
             this.btnBoard.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnBoard.Location = new System.Drawing.Point(49, 47);

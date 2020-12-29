@@ -28,6 +28,8 @@ namespace chessGraphics
 
         public Form1()
         {
+            this.BackColor = Color.FromArgb(0, 0, 0); // this should be pink-ish
+
             InitializeComponent();
         }
 
@@ -41,7 +43,6 @@ namespace chessGraphics
                 lblCurrentPlayer.Visible = true;
                 label1.Visible = true;
 
-                        
 
                 string s = enginePipe.getEngineMessage();
 
@@ -197,7 +198,7 @@ namespace chessGraphics
                 if (matBoard[srcSquare.Row, srcSquare.Col] == b)
                 {
                  
-                    matBoard[srcSquare.Row, srcSquare.Col].FlatAppearance.BorderColor = Color.Blue;
+                    matBoard[srcSquare.Row, srcSquare.Col].FlatAppearance.BorderColor = Color.Black;
                     srcSquare = null;
                 }
                 else
@@ -319,8 +320,8 @@ namespace chessGraphics
                                  matBoard[srcSquare.Row, srcSquare.Col].BackgroundImage = null;
                              }
 
-                             matBoard[srcSquare.Row, srcSquare.Col].FlatAppearance.BorderColor = Color.Blue;
-                             matBoard[dstSquare.Row, dstSquare.Col].FlatAppearance.BorderColor = Color.Blue;
+                             matBoard[srcSquare.Row, srcSquare.Col].FlatAppearance.BorderColor = Color.Black;
+                             matBoard[dstSquare.Row, dstSquare.Col].FlatAppearance.BorderColor = Color.Black;
 
                          }
 
@@ -395,13 +396,13 @@ namespace chessGraphics
                 }
                 finally
                 {
-                    Invoke((MethodInvoker)delegate
+                        Invoke((MethodInvoker)delegate
                     {
                         if (srcSquare != null)
-                            matBoard[srcSquare.Row, srcSquare.Col].FlatAppearance.BorderColor = Color.Blue;
+                            matBoard[srcSquare.Row, srcSquare.Col].FlatAppearance.BorderColor = Color.Black;
 
                         if (dstSquare != null)
-                            matBoard[dstSquare.Row, dstSquare.Col].FlatAppearance.BorderColor = Color.Blue;
+                            matBoard[dstSquare.Row, dstSquare.Col].FlatAppearance.BorderColor = Color.Black;
                         if (!skip)    
                             dstSquare = null;
                         srcSquare = null;

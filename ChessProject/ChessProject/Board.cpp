@@ -38,13 +38,15 @@ Board::Board(std::string initialBoard) {
             board[j][i] = temp;
         }
     }
-    kings[0] = board[4][0]; // Doesn't depend on string!!!! fix!!!!!!!!!!!!
+    kings[0] = board[4][0]; 
     kings[1] = board[4][7];
 
     updateAllPossibleMoves(0, false);
     updateAllPossibleMoves(1, false);
 }
-
+/*
+copy c'tor
+*/
 Board::Board(Board& board) {
     Piece* temp = 0;
     int i = 0, j = 0;
@@ -301,7 +303,7 @@ bool Board::leftAndMadeCheck(Checker src, int kingColor) {
 }
 
 /*
-    promote
+    promote the pawn 
 */
 void Board::promote(std::string msg, Checker pawn) {
     char types[4] = {'R', 'N', 'B', 'Q'};

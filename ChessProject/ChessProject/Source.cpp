@@ -119,7 +119,9 @@ Checker getChecker(string msg, int pos) {
 	int y = msg[i + 1] - '0' - 1;
 	return Checker(x, y);
 }
-
+/*
+create the mess for gui
+*/
 string createGuiMessage(Move m, int code) {
 	string result;
 	result += code + '0';
@@ -129,7 +131,9 @@ string createGuiMessage(Move m, int code) {
 	result += 7 - m.getDst().getY() + '0';
 	return result;
 }
-
+/*
+dcided the depht
+*/
 int determineDepth(int numOfPlayes) {
 	if (numOfPlayes < 5)
 	{
