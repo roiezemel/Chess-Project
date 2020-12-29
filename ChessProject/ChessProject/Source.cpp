@@ -17,7 +17,7 @@ using std::string;
 
 Checker getChecker(string msg, int pos);
 string createGuiMessage(Move m, int code);
-
+int determineDepth(int numOfPlayes);
 
 int main() {
 
@@ -69,7 +69,10 @@ int main() {
 			//msg = (char)(code + '0') + board.getStringBoard();
 		}
 		else if (code < 2 && board.board[ch2.getX()][ch2.getY()]->getType() == 'p' && ch2.getY() == 7) {
-			msg = (code + '0') + "" + board.getStringBoard();
+			string result;
+			result += (char)(code + '0');
+			result += board.getStringBoard();
+			msg = result;
 			promote = true;
 		}
 		else {
@@ -85,10 +88,11 @@ int main() {
 
 			board.promote(msgFromGraphics, ch2);
 			promote = false;
+			
 		}
 
 		if (code < 2) {
-			Move m = mm.getBestMove(2, 1);
+			Move m = mm.getBestMove(1, &determineDepth);
 			code = board.move(1, m);
 			msg = createGuiMessage(m, code);
 			strcpy_s(msgToGraphics, msg.c_str());
@@ -126,3 +130,15 @@ string createGuiMessage(Move m, int code) {
 	return result;
 }
 
+int determineDepth(int numOfPlayes) {
+	if (numOfPlayes < 5)
+	{
+		return 4;
+	}
+	if (numOfPlayes <= 20)
+	{
+		
+		return 3;
+	}
+	return 2;
+}

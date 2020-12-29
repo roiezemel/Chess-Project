@@ -30,7 +30,9 @@ MiniMax::MiniMax(Board* board) {
 MiniMax::~MiniMax() {
 }
 
-Move MiniMax::getBestMove(int depth, int color) {
+Move MiniMax::getBestMove( int color, int (*determineDepth)(int)) {
+    int depth = (determineDepth)(board->allPossibleMoves[color]->size());
+    std::cout << depth << std::endl;
     minMax(depth, board, true, color, -10000000, 10000000);
     std::cout << "Total Moves: " << allMovesCount << ", Skipped: " << skipped << ", Not Skipped: " << allMovesCount - skipped <<  std::endl;
     std::cout << "Recursions: " << recursion << std::endl;
@@ -153,7 +155,6 @@ int MiniMax::minMax(int depth, Board* board, bool isPlayerColor, int color, int 
 std::vector<Move> MiniMax::getAllMoves(Board* board, int currentColor) {
     std::vector<Move> result;
     board->updateAllPossibleMoves(currentColor, true);
-    std::cout << board->allPossibleMoves[currentColor]->size() << std::endl;
     for (const Move& move : *(board->allPossibleMoves[currentColor])) {
         Piece* eaten = board->makeMove(currentColor, move);
         if (!board->isCheck(currentColor, move))

@@ -22,6 +22,7 @@ namespace chessGraphics
         bool isCurPlWhite = true;
         bool isGameOver = false;
         string promoteBoard = null;
+        bool skip = false;
 
         const int BOARD_SIZE = 8;
 
@@ -251,97 +252,108 @@ namespace chessGraphics
         {
             if (isGameOver)
                 return;
-
+           
 
             try
             {
+                
                  Invoke((MethodInvoker)delegate {
-
-                     lblEngineCalc.Visible = true;
-            
-                     lblMove.Text = string.Format("Move from {0} to {1}", srcSquare, dstSquare);
-                    lblMove.Visible = true;
-                    //lblEngineCalc.Invalidate();
-            
-                    label2.Visible = false;
-                    lblResult.Visible = false;
-
-                    this.Refresh();
-            
-
-                    // should send pipe to engine
-                    enginePipe.sendEngineMove(srcSquare.ToString() + dstSquare.ToString());
-                    
-
-                     // should get pipe from engine
-                    string m = enginePipe.getEngineMessage();
-                        
-                    if (!enginePipe.isConnected())
-                    {
-                        MessageBox.Show("Connection to engine has lost. Bye bye.");
-                        this.Close();
-                        return;
-                    }
-                    bool special = false;
-                    String after = null;
-
-                    if (m.Length > 1)
+                     int code = 0;
+                     string res = null;
+                     if (!skip)
                      {
-                         after = m.Substring(1);
-                         m = m.Substring(0, 1);
-                         if (m.Length > 10)
+                         lblEngineCalc.Visible = true;
+
+                         lblMove.Text = string.Format("Move from {0} to {1}", srcSquare, dstSquare);
+                         lblMove.Visible = true;
+                         //lblEngineCalc.Invalidate();
+
+                         label2.Visible = false;
+                         lblResult.Visible = false;
+
+                         this.Refresh();
+
+
+                         // should send pipe to engine
+                         enginePipe.sendEngineMove(srcSquare.ToString() + dstSquare.ToString());
+
+
+                         // should get pipe from engine
+                         string m = enginePipe.getEngineMessage();
+
+                         if (!enginePipe.isConnected())
                          {
-                             promoteBoard = after;
-                             //bool isWhite = 0 != after[0] - '0';
+                             MessageBox.Show("Connection to engine has lost. Bye bye.");
+                             this.Close();
+                             return;
                          }
-                     }
-                     int code = m[0] - '0';
+                         bool special = false;
+                         String after = null;
 
-                    string res = convertEngineToText(m);
-
-                    if (res.ToLower().StartsWith("game over"))
-                    {
-                        isGameOver = true;
-                    }
-                    if (res.ToLower().StartsWith("valid") || isGameOver)
-                    {
-                        isCurPlWhite = !isCurPlWhite;
-                        lblCurrentPlayer.Text = isCurPlWhite ? "White" : "Black";
-
-                         if (!special)
+                         if (m.Length > 1)
                          {
-                             matBoard[dstSquare.Row, dstSquare.Col].BackgroundImage = matBoard[srcSquare.Row, srcSquare.Col].BackgroundImage;
-                             matBoard[srcSquare.Row, srcSquare.Col].BackgroundImage = null;
+                             after = m.Substring(1);
+                             m = m.Substring(0, 1);
+                             if (after.Length > 10)
+                             {
+                                 promoteBoard = after.Substring(0, after.Length - 1);
+                                 //bool isWhite = 0 != after[0] - '0';
+                             }
+                         }
+                         code = m[0] - '0';
+
+                         res = convertEngineToText(m);
+
+                         if (res.ToLower().StartsWith("game over"))
+                         {
+                             isGameOver = true;
+                         }
+                         if (res.ToLower().StartsWith("valid") || isGameOver)
+                         {
+                             isCurPlWhite = !isCurPlWhite;
+                             lblCurrentPlayer.Text = isCurPlWhite ? "White" : "Black";
+
+                             if (!special)
+                             {
+                                 matBoard[dstSquare.Row, dstSquare.Col].BackgroundImage = matBoard[srcSquare.Row, srcSquare.Col].BackgroundImage;
+                                 matBoard[srcSquare.Row, srcSquare.Col].BackgroundImage = null;
+                             }
+
+                             matBoard[srcSquare.Row, srcSquare.Col].FlatAppearance.BorderColor = Color.Blue;
+                             matBoard[dstSquare.Row, dstSquare.Col].FlatAppearance.BorderColor = Color.Blue;
+
                          }
 
-                        matBoard[srcSquare.Row, srcSquare.Col].FlatAppearance.BorderColor = Color.Blue;
-                        matBoard[dstSquare.Row, dstSquare.Col].FlatAppearance.BorderColor = Color.Blue;
-                    
-                    }
-
-                     this.Refresh();
+                         this.Refresh();
 
 
-                     if (promoteBoard != null)
-                     {
-                         bool isWhite = true;
-                         string pawnPro = isWhite ? "##########################################################RNBQ##" : "##########################################################rnbq##";
-                         paintForPromotion(pawnPro);
+                         if (promoteBoard != null)
+                         {
+                             bool isWhite = true;
+                             string pawnPro = isWhite ? "##########################################################RNBQ##" : "##########################################################rnbq##";
+                             paintForPromotion(pawnPro);
+                             this.Refresh();
+                             skip = true;
+                             return;
+                         }
+                         else if (after != null)
+                         {
+                             int x1 = after[0] - '0';
+                             int y1 = after[1] - '0';
+                             int x2 = after[2] - '0';
+                             int y2 = after[3] - '0';
+                             matBoard[y2, x2].BackgroundImage = matBoard[y1, x1].BackgroundImage;
+                             matBoard[y1, x1].BackgroundImage = null;
+                         }
+
+
                          this.Refresh();
                      }
-                     else if (after != null)
+                     else
                      {
-                         int x1 = after[0] - '0';
-                         int y1 = after[1] - '0';
-                         int x2 = after[2] - '0';
-                         int y2 = after[3] - '0';
-                         matBoard[y2, x2].BackgroundImage = matBoard[y1, x1].BackgroundImage;
-                         matBoard[y1, x1].BackgroundImage = null;
+                         skip = false;
                      }
-              
-
-                     this.Refresh();
-
+                     
                      if (code < 2) {
                          this.SuspendLayout();
 
@@ -390,8 +402,8 @@ namespace chessGraphics
 
                         if (dstSquare != null)
                             matBoard[dstSquare.Row, dstSquare.Col].FlatAppearance.BorderColor = Color.Blue;
-                            
-                        dstSquare = null;
+                        if (!skip)    
+                            dstSquare = null;
                         srcSquare = null;
 
                     });
@@ -430,10 +442,12 @@ namespace chessGraphics
                     
                     paintForPromotion(promoteBoard);
                     
-                    matBoard[7, j].BackgroundImage = im;
+                    matBoard[dstSquare.Row, dstSquare.Col].BackgroundImage = im;
+                    dstSquare = null;
                     promoteBoard = null;
                     enginePipe.sendEngineMove((j - 2) + "");
-
+                    Thread t = new Thread(playMove);
+                    t.Start();
                     return;
                 }
             }
