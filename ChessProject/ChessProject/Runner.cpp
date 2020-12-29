@@ -182,16 +182,16 @@ bool Runner::isCheckDiagonal() {
 
 	addi = dx > 0 ? 1 : -1;
 	addj = dy > 0 ? 1 : -1;
-	i = getPosition().getX();
-	j = getPosition().getY();
+	i = getPosition().getX() + addi;
+	j = getPosition().getY() + addj;
 
 	while (i < SIZE && j < SIZE && i >= 0 && j >= 0) {
-		i += addi;
-		j += addj;
+
 		if (_board->board[i][j])
 			return _board->board[i][j] == _board->kings[!getColor()];
 
-
+		i += addi;
+		j += addj;
 	}
 
 	return false;
