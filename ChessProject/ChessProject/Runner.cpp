@@ -177,7 +177,7 @@ bool Runner::isCheckDiagonal() {
 	int dy = kingPos.getY() - getPosition().getY();
 	int addi = 0, addj = 0, i = 0, j = 0;
 
-	if (dx != dy || dx != -dy)
+	if (dx != dy && dx != -dy)
 		return false;
 
 	addi = dx > 0 ? 1 : -1;
@@ -186,11 +186,12 @@ bool Runner::isCheckDiagonal() {
 	j = getPosition().getY();
 
 	while (i < SIZE && j < SIZE && i >= 0 && j >= 0) {
+		i += addi;
+		j += addj;
 		if (_board->board[i][j])
 			return _board->board[i][j] == _board->kings[!getColor()];
 
-		i += addi;
-		j += addj;
+
 	}
 
 	return false;
@@ -207,8 +208,8 @@ bool Runner::isCheckStraight() {
 
 	addi = dx ? (dx > 0 ? 1 : -1) : 0;
 	addj = dy ? (dy > 0 ? 1 : -1) : 0;
-	i = getPosition().getX();
-	j = getPosition().getY();
+	i = getPosition().getX() + addi;
+	j = getPosition().getY() + addj;
 
 	while (i < SIZE && j < SIZE && i >= 0 && j >= 0) {
 		if (_board->board[i][j])

@@ -275,21 +275,22 @@ namespace chessGraphics
                         this.Close();
                         return;
                     }
+                     bool promot = false;
+                    bool special = false;
+                    String after = null;
 
-                     bool special = false;
-                     String after = null;
-
-                    if (m.Length > 1 || true)
-                     {
+                    if (m.Length > 1)
+                    {
                          after = m.Substring(1);
                          m = m.Substring(0, 1);
-                         if (m[0] == 'p' || true)
+                         if (m[0] == 'p')
                          {
-                             special = true;
+                             promot = true;
                              //bool isWhite = 0 != after[0] - '0';
                              bool isWhite = true;
                              string pawnPro = isWhite ? "##########################################################RNBQ##" : "##########################################################rnbq##";
                              paintForPromotion(pawnPro);
+                             
                              
                          }
                      }
@@ -336,7 +337,11 @@ namespace chessGraphics
                      }
 
                      this.Refresh();
+                     if (promot)
+                     {
+                         string boardAfterPromot = enginePipe.getEngineMessage();
 
+                     }
                      if (code < 2) {
                          this.SuspendLayout();
 
@@ -385,7 +390,7 @@ namespace chessGraphics
 
                         if (dstSquare != null)
                             matBoard[dstSquare.Row, dstSquare.Col].FlatAppearance.BorderColor = Color.Blue;
-
+                            
                         dstSquare = null;
                         srcSquare = null;
 

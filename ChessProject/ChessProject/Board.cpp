@@ -119,8 +119,11 @@ int Board::move(int color, Move move) {
 
     updateAllPossibleMoves(!color, true);
 
-    if (code && isMate(!color))
-        return 8;
+    if (code) {
+        isInCheck[!color] = board[move.getDst().getX()][move.getDst().getY()];
+        if (isMate(!color))
+            return 8;
+    }
     
     return code;
 }
@@ -181,7 +184,7 @@ bool Board::isCheck(int color, Move move) { // colors: 0 = white, 1 = black
         return false;
     }
     
-    if (isInCheck[color] && isInCheck[color]->isCausingCheck()) // if was already in check, check if still
+    if (isInCheck[color] && board[isInCheck[color]->getPosition().getX()][isInCheck[color]->getPosition().getY()] == isInCheck[color] && isInCheck[color]->isCausingCheck()) // if was already in check, check if still
         return true;
 
     if (leftAndMadeCheck(src, color)) // check if the king is threatened from the src checker
@@ -282,8 +285,8 @@ bool Board::leftAndMadeCheck(Checker src, int kingColor) {
 
     int addi = dx ? (dx > 0 ? 1 : -1) : 0;
     int addj = dy ? (dy > 0 ? 1 : -1) : 0;
-    int i = kingPos.getX();
-    int j = kingPos.getY();
+    int i = kingPos.getX() + addi;
+    int j = kingPos.getY() + addj;
     char type = !dx || !dy ? 'r' : 'b';
 
     while (i < SIZE && j < SIZE && i >= 0 && j >= 0) {
@@ -379,17 +382,15 @@ bool Board::isMate(int color)
     int i = 0;
     Piece* temp = 0;
 
-    for (i = 0; i < sets[color].size() && mate; i++)
+    
+    for (const Move& move : (*(allPossibleMoves[color])))
     {
-        temp = sets[color][i];
-        for (const Move& move : (*(allPossibleMoves[color])))
+        if (validateMove(color, move) < 2)
         {
-            if (validateMove(color, move) < 2)
-            {
-                mate = false;
-            }
+            mate = false;
         }
-    } 
+    }
+    
     return mate;
 }
 

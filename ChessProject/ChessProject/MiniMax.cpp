@@ -31,7 +31,7 @@ MiniMax::~MiniMax() {
 }
 
 Move MiniMax::getBestMove(int depth, int color) {
-    minMax(depth, board, true, color, -1000000, 1000000);
+    minMax(depth, board, true, color, -10000000, 10000000);
     std::cout << "Total Moves: " << allMovesCount << ", Skipped: " << skipped << ", Not Skipped: " << allMovesCount - skipped <<  std::endl;
     std::cout << "Recursions: " << recursion << std::endl;
     return this->selectedMove;
