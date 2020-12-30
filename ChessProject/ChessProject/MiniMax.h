@@ -6,7 +6,7 @@ class MiniMax
 public:
 	MiniMax(Board* board);
 	~MiniMax();
-	Move getBestMove( int color, int (*determineDepth)(int));
+	Move getBestMove( int color, int (*determineDepth)(int, int));
 
 private:
 	Board* board;

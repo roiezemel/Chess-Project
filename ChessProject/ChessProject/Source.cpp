@@ -17,7 +17,7 @@ using std::string;
 
 Checker getChecker(string msg, int pos);
 string createGuiMessage(Move m, int code);
-int determineDepth(int numOfPlayes);
+int determineDepth(int numOfMoves, int numOfOpMoves);
 
 int main() {
 
@@ -130,8 +130,8 @@ string createGuiMessage(Move m, int code) {
 /*
 	determine depth for the minmax according to the current number of possible moves.
 */
-int determineDepth(int numOfPlayes) {
-	if (numOfPlayes <= 20)
+int determineDepth(int numOfMoves, int numOfOpMoves) {
+	if (numOfMoves <= 20 && numOfOpMoves <= 30)
 		return 3;
 	return 2;
 }

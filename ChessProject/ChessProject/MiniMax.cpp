@@ -35,9 +35,9 @@ MiniMax::~MiniMax() {
     Input: player's color, function to determine which depth to use according to number of possible moves.
     Output: best move found.
 */
-Move MiniMax::getBestMove( int color, int (*determineDepth)(int)) {
-    int depth = (determineDepth)(board->allPossibleMoves[color]->size());
-    
+Move MiniMax::getBestMove( int color, int (*determineDepth)(int, int)) {
+    board->updateAllPossibleMoves(!color, true);
+    int depth = (determineDepth)(board->allPossibleMoves[color]->size(), board->allPossibleMoves[!color]->size());
     allMovesCount = 0, skipped = 0, recursion = 0;
     
     minMax(depth, board, true, color, -10000000, 10000000);

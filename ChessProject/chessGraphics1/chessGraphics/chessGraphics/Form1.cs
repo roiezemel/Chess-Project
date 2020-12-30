@@ -37,7 +37,7 @@ namespace chessGraphics
 
         private void initForm()
         {
-            Process.Start("..\\Debug\\ChessProject.exe");
+            Process.Start("ChessProject.exe");
 
             enginePipe.connect();
 
@@ -137,7 +137,7 @@ namespace chessGraphics
             
             this.SuspendLayout();
 
-            lblCurrentPlayer.Text = isCurPlWhite ? "White" : "Black";
+            lblCurrentPlayer.Text = isCurPlWhite ? "Blue" : "Orange";
 
             for (i = 0; i < BOARD_SIZE; i++)
             {
@@ -210,8 +210,12 @@ namespace chessGraphics
                     dstSquare = (Square)b.Tag;
                     matBoard[dstSquare.Row, dstSquare.Col].FlatAppearance.BorderColor = Color.LightGreen;
 
+                    this.SuspendLayout();
+
                     Thread t = new Thread(playMove);
                     t.Start();
+
+                    this.ResumeLayout();
                  //   t.IsBackground = true;
                     //playMove();
                 }
@@ -316,7 +320,7 @@ namespace chessGraphics
                          if (res.ToLower().StartsWith("valid") || isGameOver)
                          {
                              isCurPlWhite = !isCurPlWhite;
-                             lblCurrentPlayer.Text = isCurPlWhite ? "White" : "Black";
+                             lblCurrentPlayer.Text = isCurPlWhite ? "Blue" : "Orange";
 
                              if (!special)
                              {
@@ -382,7 +386,7 @@ namespace chessGraphics
                          matBoard[y1, x1].BackgroundImage = null;
 
                          isCurPlWhite = !isCurPlWhite;
-                         lblCurrentPlayer.Text = isCurPlWhite ? "White" : "Black";
+                         lblCurrentPlayer.Text = isCurPlWhite ? "Blue" : "Orange";
                      }
 
                      lblEngineCalc.Visible = false;
