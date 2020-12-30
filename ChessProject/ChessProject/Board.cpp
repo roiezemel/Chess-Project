@@ -101,12 +101,6 @@ int Board::move(int color, Move move) {
 
     int code = validateMove(color, move);
 
-    if (code == 6) {
-        int castlingCode = specialMove(color, move);
-        if (castlingCode >= 0)
-            return castlingCode;
-    }
-
     if (code > 1)
         return code;
     
@@ -196,69 +190,6 @@ bool Board::isCheck(int color, Move move) { // colors: 0 = white, 1 = black
         return board[dst.getX()][dst.getY()]->isCausingCheck();
 
     return false;
-}
-
-/*
-    Check if the move is a special move (like castling).
-    Input: color, source and destination checkers.
-    Output: move code.
-*/
-int Board::specialMove(int color, Move move) {
-    Checker c1 = move.getSrc();
-    Checker c2 = move.getDst();
-    Checker* rc1 = 0;
-    Checker* rc2 = 0;
-    int code = -1;
-    if (!castling && board[c1.getX()][c1.getY()] == kings[color] && !kings[color]->getMoves() && c1.getY() == c2.getY()) {
-        if (c2.getX() == c1.getX() + 2 && board[7][c2.getY()] 
-            && board[7][c2.getY()]->getType() == 'r'
-            && !board[7][c2.getY()]->getMoves()
-            && !board[6][c2.getY()]
-            && !board[5][c2.getY()]) {
-            rc1 = &Checker(7, c2.getY());
-            rc2 = &Checker(5, c2.getY());
-        }
-        else if (c2.getX() == c1.getX() - 2 && board[0][c2.getY()]
-            && board[0][c2.getY()]->getType() == 'r'
-            && !board[0][c2.getY()]->getMoves()
-            && !board[1][c2.getY()]
-            && !board[2][c2.getY()]
-            && !board[3][c2.getY()]) {
-            rc1 = &Checker(7, c2.getY());
-            rc2 = &Checker(5, c2.getY());
-        }
-    }
-
-    if (rc1) {
-        makeMove(color, move);
-        Move m2(*rc1, *rc2);
-        makeMove(color, m2);
-
-        if (isCheck(color, move))
-            code = 4;
-        else if (isCheck(!color, move))
-            code = 1;
-
-        if (code > 1) {
-            board[rc1->getX()][rc1->getY()] = board[rc2->getX()][rc2->getY()];
-            board[rc2->getX()][rc2->getY()] = 0;
-            board[rc1->getX()][rc1->getY()]->setPosition(*rc1);
-
-            board[c1.getX()][c1.getY()] = board[c2.getX()][c2.getY()];
-            board[c2.getX()][c2.getY()] = 0;
-            board[c1.getX()][c1.getY()]->setPosition(c1);
-        }
-        else {
-            updateAllPossibleMoves(!color, true);
-
-            if (code && isMate(!color))
-                code = 8;
-
-            code += 9;
-        }
-    }
-
-    return code;
 }
 
 /*

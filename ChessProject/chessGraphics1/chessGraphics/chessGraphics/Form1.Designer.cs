@@ -74,10 +74,10 @@
             // btnBoard
             // 
             this.btnBoard.AutoEllipsis = true;
-            this.btnBoard.BackColor = System.Drawing.Color.Black;
+            this.btnBoard.BackColor = Form1.bgColor;
             this.btnBoard.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnBoard.BackgroundImage")));
             this.btnBoard.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btnBoard.FlatAppearance.BorderColor = System.Drawing.Color.Black;
+            this.btnBoard.FlatAppearance.BorderColor = Form1.bgColor;
             this.btnBoard.FlatAppearance.BorderSize = 3;
             this.btnBoard.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnBoard.Location = new System.Drawing.Point(49, 47);
@@ -92,7 +92,7 @@
             // 
             this.lblMove.AutoSize = true;
             this.lblMove.Font = new System.Drawing.Font("Arial Narrow", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblMove.ForeColor = System.Drawing.Color.Red;
+            this.lblMove.ForeColor = System.Drawing.Color.Gray;
             this.lblMove.Location = new System.Drawing.Point(629, 100);
             this.lblMove.Name = "lblMove";
             this.lblMove.Size = new System.Drawing.Size(160, 23);
@@ -104,7 +104,7 @@
             // 
             this.lblResult.AutoSize = true;
             this.lblResult.Font = new System.Drawing.Font("Arial Narrow", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblResult.ForeColor = System.Drawing.Color.Red;
+            this.lblResult.ForeColor = System.Drawing.Color.LightGreen;
             this.lblResult.Location = new System.Drawing.Point(629, 171);
             this.lblResult.Name = "lblResult";
             this.lblResult.Size = new System.Drawing.Size(31, 23);
@@ -116,7 +116,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Arial Narrow", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.ForeColor = System.Drawing.Color.Red;
+            this.label1.ForeColor = System.Drawing.Color.Gray;
             this.label1.Location = new System.Drawing.Point(629, 26);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(127, 23);
@@ -128,7 +128,7 @@
             // 
             this.lblCurrentPlayer.AutoSize = true;
             this.lblCurrentPlayer.Font = new System.Drawing.Font("Arial Narrow", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblCurrentPlayer.ForeColor = System.Drawing.Color.Red;
+            this.lblCurrentPlayer.ForeColor = System.Drawing.Color.LightGreen;
             this.lblCurrentPlayer.Location = new System.Drawing.Point(749, 26);
             this.lblCurrentPlayer.Name = "lblCurrentPlayer";
             this.lblCurrentPlayer.Size = new System.Drawing.Size(53, 23);
@@ -140,7 +140,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Arial Narrow", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.ForeColor = System.Drawing.Color.Red;
+            this.label2.ForeColor = System.Drawing.Color.Gray;
             this.label2.Location = new System.Drawing.Point(629, 138);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(158, 23);
@@ -152,7 +152,7 @@
             // 
             this.lblWaiting.AutoSize = true;
             this.lblWaiting.Font = new System.Drawing.Font("Arial Narrow", 36F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblWaiting.ForeColor = System.Drawing.Color.Red;
+            this.lblWaiting.ForeColor = System.Drawing.Color.Gray;
             this.lblWaiting.Location = new System.Drawing.Point(213, 226);
             this.lblWaiting.Name = "lblWaiting";
             this.lblWaiting.Size = new System.Drawing.Size(611, 57);
@@ -163,7 +163,7 @@
             // 
             this.lblEngineCalc.AutoSize = true;
             this.lblEngineCalc.Font = new System.Drawing.Font("Arial Narrow", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblEngineCalc.ForeColor = System.Drawing.Color.Red;
+            this.lblEngineCalc.ForeColor = System.Drawing.Color.Gray;
             this.lblEngineCalc.Location = new System.Drawing.Point(629, 64);
             this.lblEngineCalc.Name = "lblEngineCalc";
             this.lblEngineCalc.Size = new System.Drawing.Size(179, 23);
@@ -175,6 +175,7 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Arial Narrow", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.ForeColor = System.Drawing.Color.FromArgb(255, 255, 255);
             this.label3.Location = new System.Drawing.Point(12, 314);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(22, 25);
@@ -190,6 +191,8 @@
             this.label4.Size = new System.Drawing.Size(22, 25);
             this.label4.TabIndex = 12;
             this.label4.Text = "5";
+            this.label4.ForeColor = System.Drawing.Color.FromArgb(255, 255, 255);
+
             // 
             // label5
             // 
@@ -200,6 +203,7 @@
             this.label5.Size = new System.Drawing.Size(22, 25);
             this.label5.TabIndex = 20;
             this.label5.Text = "1";
+            this.label5.ForeColor = System.Drawing.Color.FromArgb(255, 255, 255);
             // 
             // label6
             // 
@@ -210,6 +214,8 @@
             this.label6.Size = new System.Drawing.Size(22, 25);
             this.label6.TabIndex = 21;
             this.label6.Text = "2";
+            this.label6.ForeColor = System.Drawing.Color.FromArgb(255, 255, 255);
+
             // 
             // label7
             // 
@@ -220,6 +226,8 @@
             this.label7.Size = new System.Drawing.Size(22, 25);
             this.label7.TabIndex = 22;
             this.label7.Text = "3";
+            this.label7.ForeColor = System.Drawing.Color.FromArgb(255, 255, 255);
+
             // 
             // label8
             // 
@@ -230,6 +238,8 @@
             this.label8.Size = new System.Drawing.Size(22, 25);
             this.label8.TabIndex = 23;
             this.label8.Text = "6";
+            this.label8.ForeColor = System.Drawing.Color.FromArgb(255, 255, 255);
+
             // 
             // label9
             // 
@@ -240,6 +250,8 @@
             this.label9.Size = new System.Drawing.Size(22, 25);
             this.label9.TabIndex = 24;
             this.label9.Text = "8";
+            this.label9.ForeColor = System.Drawing.Color.FromArgb(255, 255, 255);
+
             // 
             // label10
             // 
@@ -250,6 +262,8 @@
             this.label10.Size = new System.Drawing.Size(22, 25);
             this.label10.TabIndex = 25;
             this.label10.Text = "7";
+            this.label10.ForeColor = System.Drawing.Color.FromArgb(255, 255, 255);
+
             // 
             // label11
             // 
@@ -260,6 +274,8 @@
             this.label11.Size = new System.Drawing.Size(23, 25);
             this.label11.TabIndex = 26;
             this.label11.Text = "h";
+            this.label11.ForeColor = System.Drawing.Color.FromArgb(255, 255, 255);
+
             // 
             // label12
             // 
@@ -270,6 +286,8 @@
             this.label12.Size = new System.Drawing.Size(23, 25);
             this.label12.TabIndex = 27;
             this.label12.Text = "g";
+            this.label12.ForeColor = System.Drawing.Color.FromArgb(255, 255, 255);
+
             // 
             // label13
             // 
@@ -280,6 +298,8 @@
             this.label13.Size = new System.Drawing.Size(18, 25);
             this.label13.TabIndex = 28;
             this.label13.Text = "f";
+            this.label13.ForeColor = System.Drawing.Color.FromArgb(255, 255, 255);
+
             // 
             // label14
             // 
@@ -290,6 +310,8 @@
             this.label14.Size = new System.Drawing.Size(22, 25);
             this.label14.TabIndex = 29;
             this.label14.Text = "e";
+            this.label14.ForeColor = System.Drawing.Color.FromArgb(255, 255, 255);
+
             // 
             // label15
             // 
@@ -300,6 +322,8 @@
             this.label15.Size = new System.Drawing.Size(23, 25);
             this.label15.TabIndex = 30;
             this.label15.Text = "d";
+            this.label15.ForeColor = System.Drawing.Color.FromArgb(255, 255, 255);
+
             // 
             // label16
             // 
@@ -310,6 +334,8 @@
             this.label16.Size = new System.Drawing.Size(22, 25);
             this.label16.TabIndex = 31;
             this.label16.Text = "c";
+            this.label16.ForeColor = System.Drawing.Color.FromArgb(255, 255, 255);
+
             // 
             // label17
             // 
@@ -320,6 +346,8 @@
             this.label17.Size = new System.Drawing.Size(23, 25);
             this.label17.TabIndex = 32;
             this.label17.Text = "b";
+            this.label17.ForeColor = System.Drawing.Color.FromArgb(255, 255, 255);
+
             // 
             // label18
             // 
@@ -330,6 +358,8 @@
             this.label18.Size = new System.Drawing.Size(22, 25);
             this.label18.TabIndex = 33;
             this.label18.Text = "a";
+            this.label18.ForeColor = System.Drawing.Color.FromArgb(255, 255, 255);
+
             // 
             // label19
             // 
@@ -340,6 +370,8 @@
             this.label19.Size = new System.Drawing.Size(22, 25);
             this.label19.TabIndex = 41;
             this.label19.Text = "7";
+            this.label19.ForeColor = System.Drawing.Color.FromArgb(255, 255, 255);
+
             // 
             // label20
             // 
@@ -350,6 +382,8 @@
             this.label20.Size = new System.Drawing.Size(22, 25);
             this.label20.TabIndex = 40;
             this.label20.Text = "8";
+            this.label20.ForeColor = System.Drawing.Color.FromArgb(255, 255, 255);
+
             // 
             // label21
             // 
@@ -360,6 +394,8 @@
             this.label21.Size = new System.Drawing.Size(22, 25);
             this.label21.TabIndex = 39;
             this.label21.Text = "6";
+            this.label21.ForeColor = System.Drawing.Color.FromArgb(255, 255, 255);
+
             // 
             // label22
             // 
@@ -370,6 +406,8 @@
             this.label22.Size = new System.Drawing.Size(22, 25);
             this.label22.TabIndex = 38;
             this.label22.Text = "3";
+            this.label22.ForeColor = System.Drawing.Color.FromArgb(255, 255, 255);
+
             // 
             // label23
             // 
@@ -380,6 +418,8 @@
             this.label23.Size = new System.Drawing.Size(22, 25);
             this.label23.TabIndex = 37;
             this.label23.Text = "2";
+            this.label23.ForeColor = System.Drawing.Color.FromArgb(255, 255, 255);
+
             // 
             // label24
             // 
@@ -390,6 +430,8 @@
             this.label24.Size = new System.Drawing.Size(22, 25);
             this.label24.TabIndex = 36;
             this.label24.Text = "1";
+            this.label24.ForeColor = System.Drawing.Color.FromArgb(255, 255, 255);
+
             // 
             // label25
             // 
@@ -400,6 +442,8 @@
             this.label25.Size = new System.Drawing.Size(22, 25);
             this.label25.TabIndex = 35;
             this.label25.Text = "5";
+            this.label25.ForeColor = System.Drawing.Color.FromArgb(255, 255, 255);
+
             // 
             // label26
             // 
@@ -410,6 +454,8 @@
             this.label26.Size = new System.Drawing.Size(22, 25);
             this.label26.TabIndex = 34;
             this.label26.Text = "4";
+            this.label26.ForeColor = System.Drawing.Color.FromArgb(255, 255, 255);
+
             // 
             // label27
             // 
@@ -420,6 +466,8 @@
             this.label27.Size = new System.Drawing.Size(22, 25);
             this.label27.TabIndex = 49;
             this.label27.Text = "a";
+            this.label27.ForeColor = System.Drawing.Color.FromArgb(255, 255, 255);
+
             // 
             // label28
             // 
@@ -430,6 +478,8 @@
             this.label28.Size = new System.Drawing.Size(23, 25);
             this.label28.TabIndex = 48;
             this.label28.Text = "b";
+            this.label28.ForeColor = System.Drawing.Color.FromArgb(255, 255, 255);
+
             // 
             // label29
             // 
@@ -440,6 +490,8 @@
             this.label29.Size = new System.Drawing.Size(22, 25);
             this.label29.TabIndex = 47;
             this.label29.Text = "c";
+            this.label29.ForeColor = System.Drawing.Color.FromArgb(255, 255, 255);
+
             // 
             // label30
             // 
@@ -450,6 +502,8 @@
             this.label30.Size = new System.Drawing.Size(23, 25);
             this.label30.TabIndex = 46;
             this.label30.Text = "d";
+            this.label30.ForeColor = System.Drawing.Color.FromArgb(255, 255, 255);
+
             // 
             // label31
             // 
@@ -460,6 +514,8 @@
             this.label31.Size = new System.Drawing.Size(22, 25);
             this.label31.TabIndex = 45;
             this.label31.Text = "e";
+            this.label31.ForeColor = System.Drawing.Color.FromArgb(255, 255, 255);
+
             // 
             // label32
             // 
@@ -470,6 +526,8 @@
             this.label32.Size = new System.Drawing.Size(18, 25);
             this.label32.TabIndex = 44;
             this.label32.Text = "f";
+            this.label32.ForeColor = System.Drawing.Color.FromArgb(255, 255, 255);
+
             // 
             // label33
             // 
@@ -480,6 +538,8 @@
             this.label33.Size = new System.Drawing.Size(23, 25);
             this.label33.TabIndex = 43;
             this.label33.Text = "g";
+            this.label33.ForeColor = System.Drawing.Color.FromArgb(255, 255, 255);
+
             // 
             // label34
             // 
@@ -490,6 +550,8 @@
             this.label34.Size = new System.Drawing.Size(23, 25);
             this.label34.TabIndex = 42;
             this.label34.Text = "h";
+            this.label34.ForeColor = System.Drawing.Color.FromArgb(255, 255, 255);
+
             // 
             // Form1
             // 

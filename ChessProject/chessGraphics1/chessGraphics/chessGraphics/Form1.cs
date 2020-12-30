@@ -23,12 +23,13 @@ namespace chessGraphics
         bool isGameOver = false;
         string promoteBoard = null;
         bool skip = false;
+        public static Color bgColor = Color.FromArgb(20, 20, 20);
 
         const int BOARD_SIZE = 8;
 
         public Form1()
         {
-            this.BackColor = Color.FromArgb(0, 0, 0); // this should be pink-ish
+            this.BackColor = bgColor; // this should be pink-ish
 
             InitializeComponent();
         }
@@ -198,13 +199,13 @@ namespace chessGraphics
                 if (matBoard[srcSquare.Row, srcSquare.Col] == b)
                 {
                  
-                    matBoard[srcSquare.Row, srcSquare.Col].FlatAppearance.BorderColor = Color.Black;
+                    matBoard[srcSquare.Row, srcSquare.Col].FlatAppearance.BorderColor = bgColor;
                     srcSquare = null;
                 }
                 else
                 {
                     dstSquare = (Square)b.Tag;
-                    matBoard[dstSquare.Row, dstSquare.Col].FlatAppearance.BorderColor = Color.DarkGreen;
+                    matBoard[dstSquare.Row, dstSquare.Col].FlatAppearance.BorderColor = Color.LightGreen;
 
                     Thread t = new Thread(playMove);
                     t.Start();
@@ -215,7 +216,7 @@ namespace chessGraphics
             else
             {
                 srcSquare = (Square)b.Tag;
-                matBoard[srcSquare.Row, srcSquare.Col].FlatAppearance.BorderColor = Color.DarkGreen;
+                matBoard[srcSquare.Row, srcSquare.Col].FlatAppearance.BorderColor = Color.LightGreen;
             }
          
         }
@@ -320,8 +321,8 @@ namespace chessGraphics
                                  matBoard[srcSquare.Row, srcSquare.Col].BackgroundImage = null;
                              }
 
-                             matBoard[srcSquare.Row, srcSquare.Col].FlatAppearance.BorderColor = Color.Black;
-                             matBoard[dstSquare.Row, dstSquare.Col].FlatAppearance.BorderColor = Color.Black;
+                             matBoard[srcSquare.Row, srcSquare.Col].FlatAppearance.BorderColor = bgColor;
+                             matBoard[dstSquare.Row, dstSquare.Col].FlatAppearance.BorderColor = bgColor;
 
                          }
 
@@ -399,10 +400,10 @@ namespace chessGraphics
                         Invoke((MethodInvoker)delegate
                     {
                         if (srcSquare != null)
-                            matBoard[srcSquare.Row, srcSquare.Col].FlatAppearance.BorderColor = Color.Black;
+                            matBoard[srcSquare.Row, srcSquare.Col].FlatAppearance.BorderColor = bgColor;
 
                         if (dstSquare != null)
-                            matBoard[dstSquare.Row, dstSquare.Col].FlatAppearance.BorderColor = Color.Black;
+                            matBoard[dstSquare.Row, dstSquare.Col].FlatAppearance.BorderColor = bgColor;
                         if (!skip)    
                             dstSquare = null;
                         srcSquare = null;

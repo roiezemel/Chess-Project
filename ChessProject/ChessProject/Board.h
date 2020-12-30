@@ -44,10 +44,7 @@ private:
 	
 	int validateMove(int color, Move move); // done
 	static Piece* createPiece(char type, int i, int j, Board* board); // done
-	int specialMove(int color, Move move); // done
 	std::unordered_set<Move>* getAllPossibleMoves(int color); // done
-
-	bool castling = false; // done
 
 };
 

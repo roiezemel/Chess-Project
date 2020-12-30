@@ -30,18 +30,30 @@ MiniMax::MiniMax(Board* board) {
 MiniMax::~MiniMax() {
 }
 
+/*
+    Use the minmax the find the best move.
+    Input: player's color, function to determine which depth to use according to number of possible moves.
+    Output: best move found.
+*/
 Move MiniMax::getBestMove( int color, int (*determineDepth)(int)) {
     int depth = (determineDepth)(board->allPossibleMoves[color]->size());
-    std::cout << depth << std::endl;
+    
+    allMovesCount = 0, skipped = 0, recursion = 0;
+    
     minMax(depth, board, true, color, -10000000, 10000000);
-    std::cout << "Total Moves: " << allMovesCount << ", Skipped: " << skipped << ", Not Skipped: " << allMovesCount - skipped <<  std::endl;
-    std::cout << "Recursions: " << recursion << std::endl;
+
+    std::cout << "\n--------- MinMax Summary ---------" << std::endl;
+    std::cout << "Chosen depth: " << depth << std::endl;
+    std::cout << "Counted " << allMovesCount << " moves and skipped " << skipped << " of them\nUnskipped Moves: " << allMovesCount - skipped <<  std::endl;
+    std::cout << "Entered Recursion " << recursion << " times" << std::endl;
+    std::cout << "----------------------------------\n" << std::endl;
+    
     return this->selectedMove;
 }
 /*
-eval the situation
-input: the board and the playing color.
-output: the value of the situation
+    evaluate the board
+    input: the board and the playing color.
+    output: the evaluation of the board.
 */
 int MiniMax::eval(Board* board, int color) const {
     int i = 0, j = 0, valCol = 0, x = 0, y = 0, value = 0;
@@ -65,7 +77,7 @@ int MiniMax::eval(Board* board, int color) const {
             switch (board->sets[i][j]->getType()) {
             case 'q':
                 value += queen * valCol;
-                value += placeQueen[y][x] * valCol; // x and y switched
+                value += placeQueen[y][x] * valCol;
                 break;
             case 'p':
                 value += pawn * valCol;
@@ -102,7 +114,7 @@ int MiniMax::eval(Board* board, int color) const {
 
 /*
 find the best play for computer
-input: int board boll int int int 
+input: depth, pointer to board, this color / opponent color, player's color, alpha and beta. 
 return: int
 */
 int MiniMax::minMax(int depth, Board* board, bool isPlayerColor, int color, int alpha, int beta) {
@@ -112,13 +124,12 @@ int MiniMax::minMax(int depth, Board* board, bool isPlayerColor, int color, int 
     if (!depth) 
         return eval(board, color);
 
-    int currentColor = isPlayerColor ? color : !color;
-    int value;
+    int currentColor = isPlayerColor ? color : !color, value = 0, count = 0;
 
     std::vector<Move> allMoves = getAllMoves(board, currentColor);
     int size = allMoves.size();
     allMovesCount += size;
-    int count = 0;
+    
     Move minMaxMove;
     minMaxMove.setEval(isPlayerColor ? alpha : beta);
     for (Move move : allMoves) {

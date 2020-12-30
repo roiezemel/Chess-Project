@@ -64,11 +64,7 @@ int main() {
 
 		code = board.move(color, move);
 
-		if (code >= 9) {
-			code -= 9;
-			//msg = (char)(code + '0') + board.getStringBoard();
-		}
-		else if (code < 2 && board.board[ch2.getX()][ch2.getY()]->getType() == 'p' && ch2.getY() == 7) {
+		if (code < 2 && board.board[ch2.getX()][ch2.getY()]->getType() == 'p' && ch2.getY() == 7) {
 			string result;
 			result += (char)(code + '0');
 			result += board.getStringBoard();
@@ -120,7 +116,7 @@ Checker getChecker(string msg, int pos) {
 	return Checker(x, y);
 }
 /*
-create the mess for gui
+	create the message for gui according to last move and code.
 */
 string createGuiMessage(Move m, int code) {
 	string result;
@@ -132,17 +128,10 @@ string createGuiMessage(Move m, int code) {
 	return result;
 }
 /*
-dcided the depht
+	determine depth for the minmax according to the current number of possible moves.
 */
 int determineDepth(int numOfPlayes) {
-	if (numOfPlayes < 5)
-	{
-		return 4;
-	}
 	if (numOfPlayes <= 20)
-	{
-		
 		return 3;
-	}
 	return 2;
 }
