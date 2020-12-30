@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Threading;
+using System.Diagnostics;
 
 namespace chessGraphics
 {
@@ -36,6 +37,8 @@ namespace chessGraphics
 
         private void initForm()
         {
+            Process.Start("..\\Debug\\ChessProject.exe");
+
             enginePipe.connect();
 
             Invoke((MethodInvoker)delegate {  
